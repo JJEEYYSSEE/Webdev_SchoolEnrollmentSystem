@@ -8,18 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('subjects', function (Blueprint $table) {
+        Schema::create('registrars', function (Blueprint $table) {
             $table->id();
-            $table->string('subject_code', 50)->unique();
-            $table->string('subject_name', 150);
-            $table->text('description')->nullable();
-            $table->integer('units');
+            $table->foreignId('user_id')->unique()->constrained()->onDelete('cascade');
+            $table->string('first_name', 100);
+            $table->string('last_name', 100);
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('subjects');
+        Schema::dropIfExists('registrars');
     }
 };

@@ -6,24 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
-            $table->string('section_name')->unique();
-            $table->string('grade_level');
+            $table->foreignId('semester_id')->constrained()->onDelete('restrict');
+            $table->string('section_name', 50);
+            $table->string('year_level', 20);
+            $table->string('course')->nullable();
             $table->string('advisor_name')->nullable();
-            $table->integer('max_capacity')->default(40);
+            $table->integer('max_slots')->default(40);
+            $table->integer('current_slots')->default(0);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('sections');

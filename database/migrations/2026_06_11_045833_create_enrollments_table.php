@@ -6,27 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('enrollments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained()->onDelete('cascade');
-            $table->foreignId('section_id')->nullable()->constrained()->onDelete('set null');
-            $table->string('semester');
-            $table->string('academic_year');
-            $table->string('status')->default('pending'); // pending, approved, rejected
-            $table->foreignId('approved_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('student_id')->constrained()->onDelete('restrict');
+            $table->foreignId('semester_id')->constrained()->onDelete('restrict');
+            $table->foreignId('section_id')->constrained()->onDelete('restrict');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->foreignId('approved_by')->nullable()->constrained('registrars')->onDelete('set null');
             $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('enrollments');

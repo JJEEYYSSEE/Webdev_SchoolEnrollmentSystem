@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('semester_records', function (Blueprint $table) {
@@ -17,15 +14,12 @@ return new class extends Migration
             $table->string('academic_year');
             $table->string('semester');
             $table->decimal('gpa', 3, 2)->nullable();
-            $table->string('status')->default('active'); // active, completed, dropped
+            $table->enum('status', ['active', 'completed', 'dropped'])->default('active');
             $table->text('remarks')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('semester_records');
