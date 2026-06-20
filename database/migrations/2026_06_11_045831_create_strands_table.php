@@ -8,17 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('semesters', function (Blueprint $table) {
+        Schema::create('strands', function (Blueprint $table) {
             $table->id();
-            $table->string('school_year', 20);
-            $table->enum('semester', ['1st', '2nd', 'summer']);
-            $table->boolean('is_active')->default(false);
+            $table->string('strand_code', 20)->unique(); // e.g. 'STEM'
+            $table->string('strand_name', 150);          // e.g. 'Science, Technology, Engineering and Mathematics'
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('semesters');
+        Schema::dropIfExists('strands');
     }
 };

@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('subject_code', 50)->unique();
             $table->string('subject_name', 150);
-            $table->text('description')->nullable();
             $table->integer('units');
             $table->timestamps();
         });
