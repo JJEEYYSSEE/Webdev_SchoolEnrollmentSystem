@@ -1,6 +1,6 @@
 # School Enrollment System
 
-A web-based school enrollment system built with Laravel 13.
+A web-based Senior High School (Grade 11–12, strand-based) enrollment system built with Laravel 13.
 
 ---
 
@@ -31,12 +31,48 @@ A web-based school enrollment system built with Laravel 13.
 
 ---
 
+## Overview
+
+Two roles share one system:
+
+- **Students** register, pick a section for the active semester (subjects are fixed per
+  section and auto-loaded), and track their enrollment status, subjects, and records.
+- **Registrars** open/close the enrollment period per semester, manage sections and
+  subjects, review enrollments (approve / reject / batch approve), encode grades, and
+  finalize semesters.
+
+### User Flow
+
+```
+Landing (/) → choose role
+  Student → register (strand + grade) → dashboard
+          → enroll (pick a section for the active semester)
+          → enrollment created (pending) + subjects snapshotted
+          → view status / section / subjects / records
+  Registrar → log in
+          → create + activate a school year, set active semester, open enrollment
+          → review enrollment queue → approve / reject (with feedback) / batch approve
+          → encode grades → finalize semester (locks records + GPA)
+```
+
+Key rules:
+- **Active semester gate** — enrollment only works when a school year is active, the
+  active semester is set (1st / 2nd), and the registrar has opened enrollment.
+- **No manual subject picking** — choosing a section enrolls the student in all of that
+  section's subjects (snapshot copied to `enrollment_subjects`).
+- **Section capacity** — a section that is full hard-blocks further approvals.
+- **Rejection freezes the application** for that semester. The student must comply with the
+  registrar's feedback; only the registrar can reopen it (revert to pending, with a reason),
+  or the student applies again next semester.
+
+---
+
 ## Requirements
 
 - PHP 8.3+
 - Composer
 - MySQL 8.x
-- Node.js 18+ and npm
+- Node.js 18+ and npm (only if changing frontend assets)
 
 ---
 
@@ -52,28 +88,19 @@ cd Webdev_SchoolEnrollmentSystem
 # 2. Install PHP dependencies
 composer install
 
-# 3. Install JS dependencies (only needed if you change frontend assets)
-npm install
-
-# 4. Copy environment file
+# 3. Copy environment file
 copy .env.example .env
 php artisan key:generate
 
-# 5. Create MySQL database
+# 4. Create MySQL database
 # CREATE DATABASE school_enrollment_db;
 
-# 6. Set DB credentials in .env
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=school_enrollment_db
-# DB_USERNAME=root
-# DB_PASSWORD=yourpassword
+# 5. Set DB credentials in .env (DB_DATABASE, DB_USERNAME, DB_PASSWORD)
 
-# 7. Run migrations
-php artisan migrate
+# 6. Run migrations + seed sample data
+php artisan migrate:fresh --seed
 
-# 8. Start the server
+# 7. Start the server
 php artisan serve
 ```
 
@@ -83,33 +110,75 @@ App runs at: `http://localhost:8000`
 
 ---
 
+## Sample Accounts
+
+All seeded accounts use the password **`password`** and are pre-verified.
+
+| Role | Email | Notes |
+|---|---|---|
+| Registrar | `registrar1@school.edu.ph` | Liza Fernandez |
+| Registrar | `registrar2@school.edu.ph` | Mark Villanueva |
+| Student | `juan.delacruz@student.edu.ph` | STEM 11 — approved |
+| Student | `maria.santos@student.edu.ph` | STEM 11 — pending |
+| Student | `pedro.reyes@student.edu.ph` | ABM 11 — approved |
+| Student | `ana.garcia@student.edu.ph` | STEM 11 — rejected |
+| Student | `jose.ramos@student.edu.ph` | ABM 11 — pending |
+
+Active semester after seeding: **S.Y. 2026-2027 · 1st Semester**, enrollment open.
+
+> New students who self-register land straight on the dashboard (email verification is
+> disabled). To re-enable it, have `User` implement `MustVerifyEmail` and add the
+> `verified` middleware to the student routes.
+
+---
+
+## Database Tables
+
+| Table | Description |
+|---|---|
+| `users` | Auth accounts — role: student / registrar |
+| `students` | Student profile (strand + grade) linked to a user |
+| `registrars` | Registrar profile linked to a user |
+| `school_years` | School years — one active, with an active semester (1st/2nd) and enrollment open/closed |
+| `strands` | SHS strands — STEM, ABM, HUMSS, GAS, TVL |
+| `subjects` | Master subject list |
+| `sections` | Class section per strand / grade / semester / school year |
+| `section_subjects` | Fixed subjects assigned to each section |
+| `enrollments` | Student enrollment per section — pending / approved / rejected |
+| `enrollment_subjects` | Snapshot of subjects per enrollment, with grade and status |
+| `semester_records` | GPA per student per semester, locked on finalization |
+| `audit_logs` | Trail of registrar actions |
+
+---
+
 ## Project Structure
 
 ```
-app/Http/Controllers/
-  Auth/           — 2FA controller
-  Student/        — student-facing controllers
-  Registrar/      — registrar-facing controllers
+app/
+  Http/Controllers/
+    Auth/           — Breeze auth + registration
+    Student/        — Dashboard, Enrollment, Subject, Record, Section
+    Registrar/      — Dashboard, Enrollment, Student, Section, Subject,
+                      Semester, Grade, SemesterRecord
+  Http/Middleware/
+    CheckRole.php   — role-based access control
+  Models/           — Eloquent models with relationships
 
-app/Http/Middleware/
-  CheckRole.php   — role-based access control
+resources/views/
+  landing.blade.php — role selection
+  auth/             — login, register, password reset
+  layouts/          — app, guest, student, registrar base layouts
+  student/          — student portal pages
+  registrar/        — registrar portal pages (incl. semester, grades)
 
-resources/
-  sass/           — Bootstrap SCSS entry point + variable overrides
-  js/             — Bootstrap JS bootstrap
-  views/
-    auth/         — login, register, password reset
-    layouts/      — app, guest, student, registrar base layouts
-    student/      — student portal pages
-    registrar/    — registrar portal pages
-    profile/      — profile edit pages
+database/
+  migrations/       — domain tables + Laravel defaults
+  seeders/          — SchoolYear, Strand, Subject, User, Section,
+                      SectionSubject, Enrollment
 
 routes/
-  web.php         — student + registrar route groups
-  auth.php        — Breeze auth routes
-
-database/migrations/
-  — 9 domain tables + 3 Laravel defaults
+  web.php           — student + registrar route groups
+  auth.php          — Breeze auth routes
 ```
 
 ---
@@ -118,27 +187,11 @@ database/migrations/
 
 | Prefix | Middleware | Description |
 |---|---|---|
-| `/` | — | Landing page |
-| `/login`, `/register` | guest | Auth (Breeze) |
+| `/` | — | Landing / role selection |
+| `/login`, `/register` | guest | Auth + student registration |
 | `/student/*` | auth, role:student | Student portal |
 | `/registrar/*` | auth, role:registrar | Registrar portal |
 | `/profile` | auth | Profile edit |
-
----
-
-## Database Tables
-
-| Table | Description |
-|---|---|
-| `users` | Auth accounts — role: student / registrar / admin |
-| `students` | Student profile linked to user account |
-| `registrars` | Registrar profile linked to user account |
-| `semesters` | Academic semesters — one marked `is_active` at a time |
-| `sections` | Class sections per semester |
-| `subjects` | Master subject list |
-| `enrollments` | Student enrollment per semester — pending / approved / rejected |
-| `enrollment_subjects` | Subjects in an enrollment (pivot) with grade and status |
-| `semester_records` | GPA and completion status per student per semester |
 
 ---
 
@@ -148,16 +201,10 @@ database/migrations/
 # All routes registered
 php artisan route:list
 
-# Student routes only
-php artisan route:list | Select-String "student"
-
-# Registrar routes only
-php artisan route:list | Select-String "registrar"
-
 # Migrations ran clean
 php artisan migrate:status
 
-# Run tests
+# Run tests (includes portal smoke tests)
 php artisan test
 ```
 
@@ -173,7 +220,7 @@ php artisan serve
 ngrok http 8000
 ```
 
-Copy the `https://abc123.ngrok-free.app` URL and share with teammates. Add to `.env`:
+Copy the `https://abc123.ngrok-free.app` URL and share. Add to `.env`:
 
 ```env
 APP_URL=https://abc123.ngrok-free.app
