@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name', 'School Enrollment System'))</title>
+    <title>@yield('title', config('school.short', 'CISHS'))</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="{{ Auth::check() && Auth::user()->isRegistrar() ? 'portal-registrar' : 'portal-student' }}">
@@ -16,9 +16,10 @@
                 $dashboardRoute = Auth::check() && Auth::user()->isRegistrar() ? route('registrar.showDashboard') : route('student.showDashboard');
                 $roleLabel = Auth::check() && Auth::user()->isRegistrar() ? 'Registrar' : 'Student';
             @endphp
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ $dashboardRoute }}">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ $dashboardRoute }}"
+               title="{{ config('school.name') }}">
                 <i class="bi bi-mortarboard-fill" style="font-size:1.3rem;"></i>
-                <span class="fw-bold">{{ config('app.name', 'School Enrollment System') }}</span>
+                <span class="fw-bold">{{ config('school.short', 'CISHS') }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                     aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">

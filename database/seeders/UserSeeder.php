@@ -52,6 +52,8 @@ class UserSeeder extends Seeder
                 'name'              => $s['name'],
                 'email'             => $s['email'],
                 'email_verified_at' => now(),
+                'birthdate'         => $s['birth'],
+                'school_id'         => $s['number'],   // seeded students are already admitted
                 'password'          => Hash::make('password'),
                 'role'              => 'student',
                 'created_at'        => now(),

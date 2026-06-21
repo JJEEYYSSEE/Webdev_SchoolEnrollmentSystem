@@ -3,11 +3,13 @@
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\Student\ApplicationController as StudentApplication;
 use App\Http\Controllers\Student\DashboardController as StudentDashboard;
 use App\Http\Controllers\Student\EnrollmentController as StudentEnrollment;
 use App\Http\Controllers\Student\SubjectController as StudentSubject;
 use App\Http\Controllers\Student\RecordController as StudentRecord;
 use App\Http\Controllers\Student\SectionController as StudentSection;
+use App\Http\Controllers\Registrar\ApplicationController as RegistrarApplication;
 use App\Http\Controllers\Registrar\DashboardController as RegistrarDashboard;
 use App\Http\Controllers\Registrar\EnrollmentController as RegistrarEnrollment;
 use App\Http\Controllers\Registrar\StudentController as RegistrarStudent;
@@ -33,8 +35,16 @@ Route::middleware('auth')->group(function () {
 Route::get('/two-factor-challenge', [TwoFactorController::class, 'showChallenge'])->name('two-factor.showChallenge');
 Route::post('/two-factor-challenge', [TwoFactorController::class, 'postChallenge'])->name('two-factor.postChallenge');
 
-// Student Routes — must be authenticated and role=student
-Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth', 'verified', 'role:student']], function () {
+// Admission application — verified students who are not yet admitted (no School ID)
+Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
+    Route::get('/application', [StudentApplication::class, 'show'])->name('application.show');
+    Route::post('/application/save', [StudentApplication::class, 'save'])->name('application.save');
+    Route::post('/application/submit', [StudentApplication::class, 'submit'])->name('application.submit');
+    Route::get('/application/status', [StudentApplication::class, 'status'])->name('application.status');
+});
+
+// Student Routes — must be authenticated, verified, admitted, and role=student
+Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth', 'verified', 'admitted', 'role:student']], function () {
     Route::get('/dashboard', [StudentDashboard::class, 'showDashboard'])->name('showDashboard');
 
     Route::get('/enroll', [StudentEnrollment::class, 'showEnrollForm'])->name('showEnrollForm');
@@ -59,6 +69,11 @@ Route::group(['prefix' => 'registrar', 'as' => 'registrar.', 'middleware' => ['a
         Route::patch('/{schoolYear}/toggle-enrollment', [RegistrarSemester::class, 'toggleEnrollment'])->name('toggleEnrollment');
         Route::post('/{schoolYear}/finalize', [RegistrarSemester::class, 'finalize'])->name('finalize');
     });
+
+    // Admission applications
+    Route::get('/applications', [RegistrarApplication::class, 'showApplications'])->name('showApplications');
+    Route::get('/applications/{application}', [RegistrarApplication::class, 'showApplication'])->name('showApplication');
+    Route::post('/applications/{application}/return', [RegistrarApplication::class, 'returnApplication'])->name('returnApplication');
 
     // Enrollment management
     Route::get('/enrollments', [RegistrarEnrollment::class, 'showEnrollments'])->name('showEnrollments');
@@ -112,6 +127,6 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         return redirect()->route('registrar.showDashboard');
     }
     return redirect('/');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'admitted'])->name('dashboard');
 
 require __DIR__.'/auth.php';

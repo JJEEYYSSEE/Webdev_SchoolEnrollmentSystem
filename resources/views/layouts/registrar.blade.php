@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name', 'School Enrollment System')) — Registrar</title>
+    <title>@yield('title', config('school.short', 'CISHS')) — Registrar</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="portal-registrar">
@@ -12,9 +12,10 @@
     {{-- Top Navbar --}}
     <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid px-3">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('registrar.showDashboard') }}">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('registrar.showDashboard') }}"
+               title="{{ config('school.name') }}">
                 <i class="bi bi-mortarboard-fill" style="font-size:1.3rem;"></i>
-                <span class="fw-bold">{{ config('app.name', 'School Enrollment System') }}</span>
+                <span class="fw-bold">{{ config('school.short', 'CISHS') }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#registrarNav"
                     aria-controls="registrarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,6 +62,10 @@
                    class="sidebar-link {{ request()->routeIs('registrar.semester.*') ? 'active' : '' }}">
                     <i class="bi bi-calendar3"></i> Semesters
                 </a>
+                <a href="{{ route('registrar.showApplications') }}"
+                   class="sidebar-link {{ request()->routeIs('registrar.showApplication*') ? 'active' : '' }}">
+                    <i class="bi bi-person-vcard"></i> Applications
+                </a>
                 <a href="{{ route('registrar.showEnrollments') }}"
                    class="sidebar-link {{ request()->routeIs('registrar.showEnrollments') || request()->routeIs('registrar.showEnrollment') ? 'active' : '' }}">
                     <i class="bi bi-file-earmark-text"></i> Enrollments
@@ -78,6 +83,10 @@
                     <i class="bi bi-book-fill"></i> Subjects
                 </a>
             </nav>
+
+            <p class="text-muted mt-auto pt-4 mb-0" style="font-size:.7rem;">
+                powered by {{ config('school.platform', 'E-Tala Enrollment System') }}
+            </p>
         </aside>
 
         {{-- Main content --}}

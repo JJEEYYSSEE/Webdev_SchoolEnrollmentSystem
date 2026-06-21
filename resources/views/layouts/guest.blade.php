@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name', 'School Enrollment System')) — SHS Enrollment</title>
+    <title>@yield('title', config('school.short', 'CISHS')) — {{ config('school.short', 'CISHS') }}</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="auth-body @yield('auth-theme', 'auth-body--student')">
@@ -15,8 +15,11 @@
                 <div class="auth-brand-icon mx-auto @yield('brand-icon-class')">
                     <i class="bi @yield('brand-icon', 'bi-mortarboard-fill')"></i>
                 </div>
-                <h4 class="fw-bold mb-0 mt-2">@yield('title', 'School Enrollment System')</h4>
+                <h5 class="fw-bold mb-0 mt-2 lh-sm">{{ config('school.name', 'Cabrivex International Senior High School') }}</h5>
                 <p class="small text-muted mb-0 mt-1">@yield('auth-subtitle', 'SHS Online Enrollment Portal')</p>
+                @hasSection('title')
+                    <p class="fw-semibold text-dark mb-0 mt-3">@yield('title')</p>
+                @endif
             </div>
 
             {{-- Card body --}}
@@ -24,6 +27,10 @@
                 @yield('content')
             </div>
         </div>
+
+        <p class="text-center small text-muted mt-3 mb-0">
+            powered by {{ config('school.platform', 'E-Tala Enrollment System') }}
+        </p>
     </div>
 
     @include('partials.submit-loading')

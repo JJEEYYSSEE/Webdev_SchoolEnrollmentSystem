@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', config('app.name', 'School Enrollment System')) — Student Portal</title>
+    <title>@yield('title', config('school.short', 'CISHS')) — Student Portal</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="portal-student">
@@ -12,9 +12,10 @@
     {{-- Top Navbar --}}
     <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid px-3">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('student.showDashboard') }}">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('student.showDashboard') }}"
+               title="{{ config('school.name') }}">
                 <i class="bi bi-mortarboard-fill" style="font-size:1.3rem;"></i>
-                <span class="fw-bold">{{ config('app.name', 'School Enrollment System') }}</span>
+                <span class="fw-bold">{{ config('school.short', 'CISHS') }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#studentNav"
                     aria-controls="studentNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,6 +79,10 @@
                     <i class="bi bi-bar-chart-line-fill"></i> My Records
                 </a>
             </nav>
+
+            <p class="text-muted mt-auto pt-4 mb-0" style="font-size:.7rem;">
+                powered by {{ config('school.platform', 'E-Tala Enrollment System') }}
+            </p>
         </aside>
 
         {{-- Main content --}}

@@ -1,16 +1,15 @@
 @extends('layouts.guest')
 @section('title', 'Student Registration')
-@section('card-class', 'auth-card--wide')
 @section('content')
 
-    <p class="text-muted small mb-4 text-center">Fill in your details below to create your student account and begin enrolling.</p>
+    <p class="text-muted small mb-4 text-center">Create your account to start your Grade 11 application. You'll complete the full application form after verifying your email.</p>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
         {{-- Personal Information --}}
         <h6 class="text-uppercase fw-bold text-success mb-3 d-flex align-items-center gap-1.5" style="letter-spacing:.05em; font-size:.8rem;">
-            <i class="bi bi-person-fill fs-5"></i> Personal Information
+            <i class="bi bi-person-fill fs-5"></i> Account Details
         </h6>
 
         <div class="row g-3 mb-4">
@@ -43,65 +42,11 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <label for="phone" class="form-label fw-semibold text-secondary small">
-                    Phone Number <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">(optional)</span>
-                </label>
-                <input id="phone" type="text" name="phone" value="{{ old('phone') }}"
-                       class="form-control @error('phone') is-invalid @enderror"
-                       placeholder="e.g. 09XX-XXX-XXXX">
-                @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
-            </div>
-
-            <div class="col-md-6">
-                <label for="birthdate" class="form-label fw-semibold text-secondary small">
-                    Birthdate <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">(optional)</span>
-                </label>
-                <input id="birthdate" type="date" name="birthdate" value="{{ old('birthdate') }}"
-                       class="form-control @error('birthdate') is-invalid @enderror">
-                @error('birthdate') <div class="invalid-feedback">{{ $message }}</div> @enderror
-            </div>
-
             <div class="col-12">
-                <label for="address" class="form-label fw-semibold text-secondary small">
-                    Address <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">(optional)</span>
-                </label>
-                <input id="address" type="text" name="address" value="{{ old('address') }}"
-                       class="form-control @error('address') is-invalid @enderror"
-                       placeholder="Street, Barangay, City">
-                @error('address') <div class="invalid-feedback">{{ $message }}</div> @enderror
-            </div>
-        </div>
-
-        {{-- Academic Information --}}
-        <h6 class="text-uppercase fw-bold text-success mb-3 d-flex align-items-center gap-1.5 pt-2 border-top" style="letter-spacing:.05em; font-size:.8rem;">
-            <i class="bi bi-mortarboard-fill fs-5"></i> Academic Information
-        </h6>
-
-        <div class="row g-3 mb-4">
-            <div class="col-md-7">
-                <label for="strand_id" class="form-label fw-semibold text-secondary small">Strand <span class="text-danger">*</span></label>
-                <select id="strand_id" name="strand_id"
-                        class="form-select @error('strand_id') is-invalid @enderror" required>
-                    <option value="" disabled {{ old('strand_id') ? '' : 'selected' }}>— Select strand —</option>
-                    @foreach ($strands as $strand)
-                        <option value="{{ $strand->id }}" {{ old('strand_id') == $strand->id ? 'selected' : '' }}>
-                            {{ $strand->strand_code }} — {{ $strand->strand_name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('strand_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
-            </div>
-
-            <div class="col-md-5">
-                <label for="grade_level" class="form-label fw-semibold text-secondary small">Grade Level <span class="text-danger">*</span></label>
-                <select id="grade_level" name="grade_level"
-                        class="form-select @error('grade_level') is-invalid @enderror" required>
-                    <option value="" disabled {{ old('grade_level') ? '' : 'selected' }}>— Select grade —</option>
-                    <option value="11" {{ old('grade_level') == '11' ? 'selected' : '' }}>Grade 11</option>
-                    <option value="12" {{ old('grade_level') == '12' ? 'selected' : '' }}>Grade 12</option>
-                </select>
-                @error('grade_level') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                <label for="birthdate" class="form-label fw-semibold text-secondary small">Birthdate <span class="text-danger">*</span></label>
+                <input id="birthdate" type="date" name="birthdate" value="{{ old('birthdate') }}"
+                       class="form-control @error('birthdate') is-invalid @enderror" required>
+                @error('birthdate') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
         </div>
 
@@ -153,7 +98,7 @@
             <a class="small text-decoration-none text-success fw-bold" href="{{ route('login') }}">
                 <i class="bi bi-arrow-left"></i> Already have an account? Log In
             </a>
-            <button type="submit" class="btn btn-auth-student px-4">
+            <button type="submit" class="btn btn-auth-student px-4" data-loading-text="Creating account…">
                 <i class="bi bi-person-plus-fill"></i> Create Account
             </button>
         </div>
