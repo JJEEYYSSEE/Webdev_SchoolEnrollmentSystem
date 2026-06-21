@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.applicant')
 @section('title', 'Application Form')
 @section('content')
 
@@ -25,20 +25,21 @@
         @endif
 
         {{-- Progress bar --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 px-2">
-            @foreach ($steps as $n => $label)
-                <div class="text-center flex-fill position-relative">
-                    <div class="rounded-circle d-inline-flex align-items-center justify-content-center fw-bold
-                                {{ $n < $step ? 'bg-success text-white' : ($n === $step ? 'bg-primary text-white' : 'bg-light text-muted border') }}"
-                         style="width: 38px; height: 38px;">
-                        @if ($n < $step) <i class="bi bi-check-lg"></i> @else {{ $n }} @endif
+        <div class="position-relative mb-4 px-2">
+            {{-- connector line behind the circles --}}
+            <div class="position-absolute" style="top:18px; left:9%; right:9%; height:2px; background:#dee2e6; z-index:0;"></div>
+            <div class="d-flex justify-content-between position-relative" style="z-index:1;">
+                @foreach ($steps as $n => $label)
+                    <div class="text-center" style="width:90px;">
+                        <div class="rounded-circle d-inline-flex align-items-center justify-content-center fw-bold mx-auto
+                                    {{ $n < $step ? 'bg-success text-white' : ($n === $step ? 'bg-primary text-white' : 'bg-white text-muted border') }}"
+                             style="width: 38px; height: 38px;">
+                            @if ($n < $step) <i class="bi bi-check-lg"></i> @else {{ $n }} @endif
+                        </div>
+                        <div class="small mt-1 {{ $n === $step ? 'fw-bold text-primary' : 'text-muted' }}">{{ $label }}</div>
                     </div>
-                    <div class="small mt-1 {{ $n === $step ? 'fw-bold text-primary' : 'text-muted' }}">{{ $label }}</div>
-                    @if (! $loop->last)
-                        <div class="position-absolute top-0 end-0 translate-middle-y" style="height:2px; width:50%; background:{{ $n < $step ? '#198754' : '#dee2e6' }}; margin-top:19px;"></div>
-                    @endif
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
 
         <div class="card border-0 shadow-sm">

@@ -68,7 +68,8 @@
                     @forelse ($a->documents as $doc)
                         <li class="mb-1">
                             <i class="bi bi-file-earmark-check text-success me-1"></i>
-                            <a href="{{ $doc->url() }}" target="_blank">{{ $doc->original_name ?? $doc->type }}</a>
+                            <strong>{{ $doc->label() }}</strong> —
+                            <a href="{{ $doc->url() }}" target="_blank">{{ $doc->original_name ?? 'file' }}</a>
                         </li>
                     @empty
                         <li class="text-muted">No documents uploaded.</li>
