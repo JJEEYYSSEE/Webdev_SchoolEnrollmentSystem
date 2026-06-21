@@ -7,36 +7,37 @@
     <title>@yield('title', config('app.name', 'School Enrollment System')) — Student Portal</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<body>
+<body class="portal-student">
 
     {{-- Top Navbar --}}
-    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-md navbar-dark">
         <div class="container-fluid px-3">
             <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('student.showDashboard') }}">
-                <i class="bi bi-mortarboard-fill" style="font-size:1.1rem;"></i>
-                Student Portal
+                <i class="bi bi-mortarboard-fill" style="font-size:1.3rem;"></i>
+                <span class="fw-bold">{{ config('app.name', 'School Enrollment System') }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#studentNav"
                     aria-controls="studentNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="studentNav">
-                <ul class="navbar-nav ms-auto align-items-md-center gap-1">
+                <ul class="navbar-nav ms-auto align-items-md-center gap-2">
                     <li class="nav-item">
-                        <span class="nav-link text-white-50 d-flex align-items-center gap-1">
-                            <i class="bi bi-person-circle"></i>
-                            {{ Auth::user()?->name ?? 'Guest' }}
+                        <span class="nav-link text-white d-flex align-items-center gap-1">
+                            <i class="bi bi-person-fill text-white-50"></i>
+                            <span class="fw-semibold text-white">{{ Auth::user()?->name ?? 'Guest' }}</span>
+                            <span class="badge bg-light text-dark text-uppercase ms-1" style="font-size:0.7rem;">Student</span>
                         </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('profile.edit') }}">
-                            <i class="bi bi-gear me-1"></i> Profile
+                        <a class="nav-link text-white-50" href="{{ route('profile.edit') }}" title="Profile Settings">
+                            <i class="bi bi-gear-fill"></i>
                         </a>
                     </li>
-                    <li class="nav-item ms-1">
+                    <li class="nav-item ms-md-2">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="btn btn-outline-light btn-sm">
+                            <button type="submit" class="btn btn-outline-light btn-sm w-100">
                                 <i class="bi bi-box-arrow-right me-1"></i> Log Out
                             </button>
                         </form>
@@ -53,27 +54,27 @@
             <p class="sidebar-label">My Menu</p>
             <nav class="nav flex-column gap-1">
                 <a href="{{ route('student.showDashboard') }}"
-                   class="nav-link {{ request()->routeIs('student.showDashboard') ? 'active' : '' }}">
-                    <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                   class="sidebar-link {{ request()->routeIs('student.showDashboard') ? 'active' : '' }}">
+                    <i class="bi bi-speedometer2"></i> Dashboard
                 </a>
                 <a href="{{ route('student.showEnrollForm') }}"
-                   class="nav-link {{ request()->routeIs('student.showEnrollForm') ? 'active' : '' }}">
-                    <i class="bi bi-pencil-square"></i> Enrollment Form
+                   class="sidebar-link {{ request()->routeIs('student.showEnrollForm') ? 'active' : '' }}">
+                    <i class="bi bi-file-earmark-text"></i> Enrollment Form
                 </a>
                 <a href="{{ route('student.showEnrollStatus') }}"
-                   class="nav-link {{ request()->routeIs('student.showEnrollStatus') ? 'active' : '' }}">
-                    <i class="bi bi-clipboard2-check"></i> Enrollment Status
+                   class="sidebar-link {{ request()->routeIs('student.showEnrollStatus') ? 'active' : '' }}">
+                    <i class="bi bi-hourglass-split"></i> Enrollment Status
                 </a>
                 <a href="{{ route('student.showSection') }}"
-                   class="nav-link {{ request()->routeIs('student.showSection') ? 'active' : '' }}">
+                   class="sidebar-link {{ request()->routeIs('student.showSection') ? 'active' : '' }}">
                     <i class="bi bi-collection"></i> My Section
                 </a>
                 <a href="{{ route('student.showSubjects') }}"
-                   class="nav-link {{ request()->routeIs('student.showSubjects') ? 'active' : '' }}">
+                   class="sidebar-link {{ request()->routeIs('student.showSubjects') ? 'active' : '' }}">
                     <i class="bi bi-book-fill"></i> My Subjects
                 </a>
                 <a href="{{ route('student.showRecords') }}"
-                   class="nav-link {{ request()->routeIs('student.showRecords') ? 'active' : '' }}">
+                   class="sidebar-link {{ request()->routeIs('student.showRecords') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart-line-fill"></i> My Records
                 </a>
             </nav>

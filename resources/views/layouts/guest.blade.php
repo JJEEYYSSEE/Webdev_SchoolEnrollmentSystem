@@ -7,20 +7,20 @@
     <title>@yield('title', config('app.name', 'School Enrollment System')) — SHS Enrollment</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<body>
+<body class="auth-body @yield('auth-theme', 'auth-body--student')">
     <div class="guest-wrapper">
-        <div class="auth-card card @yield('card-class')">
-            {{-- Card header with gradient --}}
-            <div class="card-header text-center">
-                <div class="auth-brand-icon mx-auto">
-                    <i class="bi bi-mortarboard-fill"></i>
+        <div class="auth-card card border-0 rounded-4 shadow-lg @yield('card-class')">
+            {{-- Card header --}}
+            <div class="card-header border-0 text-center py-4 bg-transparent text-dark">
+                <div class="auth-brand-icon mx-auto @yield('brand-icon-class')">
+                    <i class="bi @yield('brand-icon', 'bi-mortarboard-fill')"></i>
                 </div>
-                <h5 class="fw-bold mb-0 mt-1">@yield('title', 'School Enrollment System')</h5>
-                <p class="small mb-0 mt-1 opacity-75">SHS Online Enrollment Portal</p>
+                <h4 class="fw-bold mb-0 mt-2">@yield('title', 'School Enrollment System')</h4>
+                <p class="small text-muted mb-0 mt-1">@yield('auth-subtitle', 'SHS Online Enrollment Portal')</p>
             </div>
 
             {{-- Card body --}}
-            <div class="card-body">
+            <div class="card-body px-4 pb-4 pt-0">
                 @yield('content')
             </div>
         </div>

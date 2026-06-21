@@ -7,13 +7,18 @@
     <title>@yield('title', config('app.name', 'School Enrollment System'))</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
-<body>
+<body class="{{ Auth::check() && Auth::user()->isRegistrar() ? 'portal-registrar' : 'portal-student' }}">
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ route('dashboard') }}">
-                <i class="bi bi-mortarboard-fill" style="font-size:1.1rem;"></i>
-                School Enrollment System
+    {{-- Top Navbar --}}
+    <nav class="navbar navbar-expand-md navbar-dark">
+        <div class="container-fluid px-3">
+            @php
+                $dashboardRoute = Auth::check() && Auth::user()->isRegistrar() ? route('registrar.showDashboard') : route('student.showDashboard');
+                $roleLabel = Auth::check() && Auth::user()->isRegistrar() ? 'Registrar' : 'Student';
+            @endphp
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ $dashboardRoute }}">
+                <i class="bi bi-mortarboard-fill" style="font-size:1.3rem;"></i>
+                <span class="fw-bold">{{ config('app.name', 'School Enrollment System') }}</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                     aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,22 +26,23 @@
             </button>
             <div class="collapse navbar-collapse" id="mainNav">
                 @auth
-                    <ul class="navbar-nav ms-auto align-items-md-center gap-1">
+                    <ul class="navbar-nav ms-auto align-items-md-center gap-2">
                         <li class="nav-item">
-                            <span class="nav-link text-white-50 d-flex align-items-center gap-1">
-                                <i class="bi bi-person-circle"></i>
-                                {{ Auth::user()->name }}
+                            <span class="nav-link text-white d-flex align-items-center gap-1">
+                                <i class="bi @if(Auth::user()->isRegistrar()) bi-person-badge-fill @else bi-person-fill @endif text-white-50"></i>
+                                <span class="fw-semibold text-white">{{ Auth::user()->name }}</span>
+                                <span class="badge bg-light text-dark text-uppercase ms-1" style="font-size:0.7rem;">{{ $roleLabel }}</span>
                             </span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('profile.edit') }}">
-                                <i class="bi bi-gear me-1"></i> Profile
+                            <a class="nav-link text-white-50" href="{{ route('profile.edit') }}" title="Profile Settings">
+                                <i class="bi bi-gear-fill"></i>
                             </a>
                         </li>
-                        <li class="nav-item ms-1">
+                        <li class="nav-item ms-md-2">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-light btn-sm">
+                                <button type="submit" class="btn btn-outline-light btn-sm w-100">
                                     <i class="bi bi-box-arrow-right me-1"></i> Log Out
                                 </button>
                             </form>

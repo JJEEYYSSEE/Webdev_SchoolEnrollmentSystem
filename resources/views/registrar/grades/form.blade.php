@@ -2,57 +2,83 @@
 @section('title', 'Encode Grades')
 @section('content')
 
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <a href="{{ route('registrar.showEnrollment', $enrollment->id) }}" class="btn btn-sm btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Back
-        </a>
-        <h4 class="fw-bold mb-0">Encode Grades</h4>
-    </div>
-
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <div class="alert alert-danger">{{ $error }}</div>
-        @endforeach
-    @endif
-
-    <div class="card shadow-sm mb-3">
-        <div class="card-body">
-            <h6 class="fw-bold mb-1">{{ $enrollment->student->first_name }} {{ $enrollment->student->last_name }}</h6>
-            <span class="text-muted small">
-                {{ $enrollment->student->student_number }} &middot;
-                {{ $enrollment->section->strand->strand_code ?? '' }} - {{ $enrollment->section->section_name }}
-            </span>
+    {{-- Page Header --}}
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4 pb-2 border-bottom">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{{ route('registrar.showEnrollment', $enrollment->id) }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
+                <i class="bi bi-arrow-left"></i> <span>Back</span>
+            </a>
+            <h4 class="fw-bold mb-0 text-dark">Encode Grades</h4>
         </div>
     </div>
 
-    <form method="POST" action="{{ route('registrar.updateGrades', $enrollment->id) }}">
-        @csrf @method('PUT')
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <div>{{ session('success') }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="bi bi-exclamation-octagon-fill text-danger fs-5"></i>
+                <strong class="text-danger">Please correct the errors below:</strong>
+            </div>
+            <ul class="mb-0 ps-3 small">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
 
-        <div class="card shadow-sm">
+    {{-- Student Info Header Card --}}
+    <div class="card border-0 border-start border-4 border-primary shadow-sm mb-4 bg-white">
+        <div class="card-body py-3">
+            <h5 class="fw-bold mb-1 text-dark">{{ $enrollment->student->first_name }} {{ $enrollment->student->last_name }}</h5>
+            <div class="d-flex align-items-center gap-2 text-muted small">
+                <span>Student No: <strong>{{ $enrollment->student->student_number }}</strong></span>
+                &middot;
+                <span>Section: <strong class="text-secondary">{{ $enrollment->section->strand->strand_code ?? '' }} - {{ $enrollment->section->section_name }}</strong></span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Grade Form --}}
+    <form method="POST" action="{{ route('registrar.updateGrades', $enrollment->id) }}">
+        @csrf 
+        @method('PUT')
+
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4">
             <div class="table-responsive">
                 <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Code</th>
+                            <th class="px-4">Code</th>
                             <th>Subject</th>
-                            <th style="width: 130px;">Grade (1.00–5.00)</th>
-                            <th style="width: 160px;">Status</th>
+                            <th style="width: 180px;">Grade (1.00–5.00)</th>
+                            <th style="width: 200px;" class="px-4">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($enrollment->enrollmentSubjects as $es)
                             <tr>
-                                <td class="text-muted fw-bold">{{ $es->subject->subject_code }}</td>
-                                <td>{{ $es->subject->subject_name }}</td>
+                                <td class="px-4 text-muted fw-bold">{{ $es->subject->subject_code }}</td>
                                 <td>
-                                    <input type="number" step="0.01" min="1" max="5"
-                                           name="grades[{{ $es->id }}][grade]" value="{{ $es->grade }}"
-                                           class="form-control form-control-sm">
+                                    <div class="fw-semibold text-dark">{{ $es->subject->subject_name }}</div>
+                                    <div class="small text-muted" style="font-size: 0.75rem;">Units: {{ $es->subject->units }}</div>
                                 </td>
                                 <td>
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text"><i class="bi bi-bookmark-star"></i></span>
+                                        <input type="number" step="0.01" min="1" max="5"
+                                               name="grades[{{ $es->id }}][grade]" value="{{ $es->grade }}"
+                                               class="form-control" placeholder="—">
+                                    </div>
+                                </td>
+                                <td class="px-4">
                                     <select name="grades[{{ $es->id }}][status]" class="form-select form-select-sm">
                                         @foreach (['enrolled', 'passed', 'failed', 'dropped'] as $st)
                                             <option value="{{ $st }}" {{ $es->status === $st ? 'selected' : '' }}>{{ ucfirst($st) }}</option>
@@ -66,9 +92,11 @@
             </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-2 mt-3">
-            <a href="{{ route('registrar.showEnrollment', $enrollment->id) }}" class="btn btn-secondary">Cancel</a>
-            <button type="submit" class="btn btn-primary">Save Grades</button>
+        <div class="d-flex justify-content-end gap-2">
+            <a href="{{ route('registrar.showEnrollment', $enrollment->id) }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary d-inline-flex align-items-center gap-1">
+                <i class="bi bi-floppy"></i> Save Grades
+            </button>
         </div>
     </form>
 
