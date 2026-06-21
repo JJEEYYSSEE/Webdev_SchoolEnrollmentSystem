@@ -126,6 +126,11 @@ class Application extends Model
         return $this->status === 'qualified';
     }
 
+    public function isWaitlisted(): bool
+    {
+        return $this->status === 'waitlisted';
+    }
+
     public function fullName(): string
     {
         return trim("{$this->first_name} {$this->last_name}");

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\FirstPasswordController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Student\ApplicationController as StudentApplication;
 use App\Http\Controllers\Student\DashboardController as StudentDashboard;
@@ -24,8 +25,14 @@ use Illuminate\Support\Facades\Route;
 // Landing / role selection
 Route::get('/', [TestController::class, 'startPage'])->name('landing');
 
-// Breeze profile routes
+// First-login forced password change (admitted students using the default password)
 Route::middleware('auth')->group(function () {
+    Route::get('/first-password', [FirstPasswordController::class, 'show'])->name('password.first');
+    Route::post('/first-password', [FirstPasswordController::class, 'update'])->name('password.first.update');
+});
+
+// Breeze profile routes
+Route::middleware(['auth', 'mustchange'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -44,7 +51,7 @@ Route::middleware(['auth', 'verified', 'role:student'])->group(function () {
 });
 
 // Student Routes — must be authenticated, verified, admitted, and role=student
-Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth', 'verified', 'admitted', 'role:student']], function () {
+Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth', 'verified', 'admitted', 'mustchange', 'role:student']], function () {
     Route::get('/dashboard', [StudentDashboard::class, 'showDashboard'])->name('showDashboard');
 
     Route::get('/enroll', [StudentEnrollment::class, 'showEnrollForm'])->name('showEnrollForm');
@@ -74,6 +81,7 @@ Route::group(['prefix' => 'registrar', 'as' => 'registrar.', 'middleware' => ['a
     Route::get('/applications', [RegistrarApplication::class, 'showApplications'])->name('showApplications');
     Route::get('/applications/{application}', [RegistrarApplication::class, 'showApplication'])->name('showApplication');
     Route::post('/applications/{application}/return', [RegistrarApplication::class, 'returnApplication'])->name('returnApplication');
+    Route::post('/applications/{application}/qualify', [RegistrarApplication::class, 'qualifyApplication'])->name('qualifyApplication');
 
     // Enrollment management
     Route::get('/enrollments', [RegistrarEnrollment::class, 'showEnrollments'])->name('showEnrollments');
@@ -127,6 +135,6 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         return redirect()->route('registrar.showDashboard');
     }
     return redirect('/');
-})->middleware(['auth', 'verified', 'admitted'])->name('dashboard');
+})->middleware(['auth', 'verified', 'admitted', 'mustchange'])->name('dashboard');
 
 require __DIR__.'/auth.php';

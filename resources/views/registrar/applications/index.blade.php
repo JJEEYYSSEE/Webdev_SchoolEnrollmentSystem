@@ -4,9 +4,15 @@
 
     @php
         $badge = [
-            'pending'   => 'bg-warning-subtle text-warning-emphasis',
-            'invalid'   => 'bg-warning-subtle text-warning-emphasis',
-            'qualified' => 'bg-success-subtle text-success-emphasis',
+            'pending'    => 'bg-warning-subtle text-warning-emphasis',
+            'invalid'    => 'bg-warning-subtle text-warning-emphasis',
+            'qualified'  => 'bg-success-subtle text-success-emphasis',
+            'waitlisted' => 'bg-info-subtle text-info-emphasis',
+        ];
+        $flash = [
+            'application-returned'   => ['success', 'Application returned to the applicant for correction.'],
+            'application-qualified'  => ['success', 'Applicant qualified — School ID issued and emailed.'],
+            'application-waitlisted' => ['info', 'Applicant waitlisted — no slots left for that strand.'],
         ];
     @endphp
 
@@ -23,17 +29,18 @@
         </div>
     </div>
 
-    @if (session('status') === 'application-returned')
-        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-sm mb-4" role="alert">
-            <i class="bi bi-check-circle-fill text-success fs-5"></i>
-            <div>Application returned to the applicant for correction.</div>
+    @if (isset($flash[session('status')]))
+        @php [$variant, $message] = $flash[session('status')]; @endphp
+        <div class="alert alert-{{ $variant }} alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill fs-5"></i>
+            <div>{{ $message }}</div>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
     {{-- Status filter pills --}}
     <ul class="nav nav-pills gap-2 mb-3">
-        @php $tabs = ['' => 'All', 'pending' => 'Pending', 'invalid' => 'Returned', 'qualified' => 'Qualified']; @endphp
+        @php $tabs = ['' => 'All', 'pending' => 'Pending', 'invalid' => 'Returned', 'waitlisted' => 'Waitlisted', 'qualified' => 'Qualified']; @endphp
         @foreach ($tabs as $value => $label)
             <li class="nav-item">
                 <a href="{{ route('registrar.showApplications', array_filter(['status' => $value])) }}"
