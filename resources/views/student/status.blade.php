@@ -2,30 +2,58 @@
 @section('title', 'Enrollment Status')
 @section('content')
 
-    <h4 class="fw-bold mb-4">Enrollment Status</h4>
+    {{-- Page Header --}}
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 pb-2 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-0 text-dark">Enrollment Status</h3>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="{{ route('student.showDashboard') }}" class="text-decoration-none">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Enrollment Status</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
 
     @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <div>{{ session('success') }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
     @if (session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center gap-2 border-0 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+            <div>{{ session('error') }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     @endif
 
     @if (! $enrollment)
-        <div class="card shadow-sm">
+        <div class="card border-0 shadow-sm rounded-3">
             <div class="card-body text-center py-5">
-                <i class="bi bi-inbox text-muted" style="font-size: 2.5rem;"></i>
-                <h5 class="fw-bold mt-3">No enrollment yet</h5>
-                <p class="text-muted">You haven't submitted an enrollment for the active semester.</p>
-                <a href="{{ route('student.showEnrollForm') }}" class="btn btn-primary">Enroll Now</a>
+                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center mb-3" style="width: 72px; height: 72px;">
+                    <i class="bi bi-inbox text-muted fs-2"></i>
+                </div>
+                <h5 class="fw-bold mt-2 text-dark">No enrollment record found</h5>
+                <p class="text-muted small mx-auto mb-4" style="max-width: 420px;">You haven't submitted an enrollment form for the active semester yet. Click below to start.</p>
+                <a href="{{ route('student.showEnrollForm') }}" class="btn btn-success d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-pencil-square"></i> Enroll Now
+                </a>
             </div>
         </div>
     @else
         @php
             $badgeClass = match($enrollment->status) {
-                'approved' => 'text-bg-success',
-                'rejected' => 'text-bg-danger',
-                default    => 'text-bg-warning',
+                'approved' => 'bg-success',
+                'rejected' => 'bg-danger',
+                default    => 'bg-warning text-dark',
+            };
+            $borderClass = match($enrollment->status) {
+                'approved' => 'border-success',
+                'rejected' => 'border-danger',
+                default    => 'border-warning',
             };
             $icon = match($enrollment->status) {
                 'approved' => 'bi-check-circle-fill text-success',
@@ -34,21 +62,27 @@
             };
         @endphp
 
-        <div class="card shadow-sm mb-4">
-            <div class="card-body d-flex align-items-center gap-4 py-4">
-                <i class="bi {{ $icon }} fs-1"></i>
-                <div>
-                    <p class="small text-muted text-uppercase fw-bold mb-1">Current Status</p>
-                    <span class="badge {{ $badgeClass }} fs-5 px-3 py-2">{{ ucfirst($enrollment->status) }}</span>
+        {{-- Status highlight panel --}}
+        <div class="card border-0 border-start border-4 {{ $borderClass }} shadow-sm mb-4 bg-white">
+            <div class="card-body p-4 d-flex align-items-start gap-4">
+                <i class="bi {{ $icon }} fs-1 mt-0.5"></i>
+                <div class="flex-grow-1">
+                    <p class="small text-muted text-uppercase fw-bold mb-1" style="letter-spacing: 0.05em; font-size:0.7rem;">Application Status</p>
+                    <span class="badge {{ $badgeClass }} fs-5 px-3 py-2 rounded-pill shadow-sm mb-3">{{ ucfirst($enrollment->status) }}</span>
+                    
                     @if ($enrollment->status === 'pending')
-                        <p class="text-muted small mt-2 mb-0">Your enrollment is under review by the registrar.</p>
+                        <div class="text-secondary small">
+                            <i class="bi bi-info-circle me-1"></i> Your enrollment is currently under review by the registrar. We will process your section assignment and subject units shortly.
+                        </div>
                     @elseif ($enrollment->status === 'approved')
-                        <p class="text-muted small mt-2 mb-0">Approved — you may now view your subjects.</p>
+                        <div class="text-success small fw-semibold">
+                            <i class="bi bi-check2 me-1"></i> Approved — your section and subjects are locked in. You may view your curriculum and schedules below.
+                        </div>
                     @elseif ($enrollment->status === 'rejected')
-                        <p class="text-danger small mt-2 mb-1">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
-                            <strong>Registrar feedback:</strong> {{ $enrollment->remarks ?? 'No reason given.' }}
-                        </p>
+                        <div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-10 rounded-3 mb-3">
+                            <h6 class="fw-bold text-danger mb-1"><i class="bi bi-exclamation-octagon-fill"></i> Registrar Feedback:</h6>
+                            <p class="text-danger small mb-0">{{ $enrollment->remarks ?? 'No reason given.' }}</p>
+                        </div>
                         <p class="text-muted small mb-0">
                             Your application is <strong>frozen for this semester</strong>. Please comply with the
                             requirements above. You cannot re-apply on your own — the registrar must reopen your
@@ -59,63 +93,81 @@
             </div>
         </div>
 
+        {{-- Stats Grid --}}
         <div class="row g-3 mb-4">
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <p class="small text-muted text-uppercase fw-bold mb-2">School Year</p>
-                        <p class="fw-bold mb-0">{{ $enrollment->section->schoolYear->year_label ?? '—' }}</p>
-                        <p class="text-muted small mb-0">{{ $enrollment->section->semester ?? '' }} Semester</p>
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-calendar3 fs-5"></i>
+                        </div>
+                        <div>
+                            <p class="small text-muted text-uppercase fw-bold mb-0.5" style="letter-spacing: 0.05em; font-size:0.65rem;">Academic Year</p>
+                            <h6 class="fw-bold text-dark mb-0">{{ $enrollment->section->schoolYear->year_label ?? '—' }}</h6>
+                            <span class="small text-muted" style="font-size:0.75rem;">{{ $enrollment->section->semester ?? '' }} Semester</span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <p class="small text-muted text-uppercase fw-bold mb-2">Section</p>
-                        <p class="fw-bold mb-0">{{ $enrollment->section->section_name }}</p>
-                        <p class="text-muted small mb-0">
-                            {{ $enrollment->section->strand->strand_code ?? '' }} &middot;
-                            Grade {{ $enrollment->section->grade_level }} &middot;
-                            {{ $enrollment->section->time_period }}
-                        </p>
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-collection-play fs-5"></i>
+                        </div>
+                        <div>
+                            <p class="small text-muted text-uppercase fw-bold mb-0.5" style="letter-spacing: 0.05em; font-size:0.65rem;">Section Details</p>
+                            <h6 class="fw-bold text-dark mb-0">{{ $enrollment->section->section_name }}</h6>
+                            <span class="small text-muted" style="font-size:0.75rem;">{{ $enrollment->section->strand->strand_code ?? '' }} &middot; G{{ $enrollment->section->grade_level }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card h-100">
-                    <div class="card-body">
-                        <p class="small text-muted text-uppercase fw-bold mb-2">Date Submitted</p>
-                        <p class="fw-bold mb-0">{{ $enrollment->submitted_at?->format('M d, Y') ?? '—' }}</p>
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success bg-opacity-10 text-success d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                            <i class="bi bi-clock-history fs-5"></i>
+                        </div>
+                        <div>
+                            <p class="small text-muted text-uppercase fw-bold mb-0.5" style="letter-spacing: 0.05em; font-size:0.65rem;">Submitted Date</p>
+                            <h6 class="fw-bold text-dark mb-0">{{ $enrollment->submitted_at?->format('M d, Y') ?? '—' }}</h6>
+                            <span class="small text-muted" style="font-size:0.75rem;">{{ $enrollment->submitted_at?->format('g:i A') ?? '' }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="card shadow-sm">
-            <div class="card-header fw-bold">Enrolled Subjects ({{ $enrollment->subjects->count() }})</div>
+        {{-- Enrolled subjects list --}}
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                    <i class="bi bi-book text-success fs-5"></i>
+                    <span>Enrolled Subjects ({{ $enrollment->subjects->count() }})</span>
+                </h5>
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover mb-0">
+                <table class="table table-hover mb-0 align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Code</th>
+                            <th class="px-4">Code</th>
                             <th>Subject</th>
-                            <th class="text-center">Units</th>
+                            <th class="text-center px-4">Units</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($enrollment->subjects as $subject)
                             <tr>
-                                <td class="text-muted fw-bold">{{ $subject->subject_code }}</td>
-                                <td>{{ $subject->subject_name }}</td>
-                                <td class="text-center">{{ $subject->units }}</td>
+                                <td class="px-4 text-muted fw-bold">{{ $subject->subject_code }}</td>
+                                <td class="fw-semibold text-dark">{{ $subject->subject_name }}</td>
+                                <td class="text-center px-4 fw-bold text-secondary">{{ $subject->units }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
-
     @endif
 
 @endsection

@@ -3,19 +3,19 @@
 @section('card-class', 'auth-card--wide')
 @section('content')
 
-    <p class="text-muted small mb-4">Fill in your details below to create your student account and begin enrolling.</p>
+    <p class="text-muted small mb-4 text-center">Fill in your details below to create your student account and begin enrolling.</p>
 
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
         {{-- Personal Information --}}
-        <p class="text-uppercase fw-bold small text-muted mb-2" style="letter-spacing:.05em; font-size:.72rem;">
-            <i class="bi bi-person me-1"></i> Personal Information
-        </p>
+        <h6 class="text-uppercase fw-bold text-success mb-3 d-flex align-items-center gap-1.5" style="letter-spacing:.05em; font-size:.8rem;">
+            <i class="bi bi-person-fill fs-5"></i> Personal Information
+        </h6>
 
-        <div class="row g-3 mb-3">
+        <div class="row g-3 mb-4">
             <div class="col-md-6">
-                <label for="first_name" class="form-label fw-semibold">First Name</label>
+                <label for="first_name" class="form-label fw-semibold text-secondary small">First Name <span class="text-danger">*</span></label>
                 <input id="first_name" type="text" name="first_name" value="{{ old('first_name') }}"
                        class="form-control @error('first_name') is-invalid @enderror"
                        placeholder="e.g. Maria" required autofocus>
@@ -23,7 +23,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="last_name" class="form-label fw-semibold">Last Name</label>
+                <label for="last_name" class="form-label fw-semibold text-secondary small">Last Name <span class="text-danger">*</span></label>
                 <input id="last_name" type="text" name="last_name" value="{{ old('last_name') }}"
                        class="form-control @error('last_name') is-invalid @enderror"
                        placeholder="e.g. Santos" required>
@@ -31,7 +31,7 @@
             </div>
 
             <div class="col-12">
-                <label for="email" class="form-label fw-semibold">Email Address</label>
+                <label for="email" class="form-label fw-semibold text-secondary small">Email Address <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-text bg-light border-end-0">
                         <i class="bi bi-envelope text-muted"></i>
@@ -44,8 +44,8 @@
             </div>
 
             <div class="col-md-6">
-                <label for="phone" class="form-label fw-semibold">
-                    Phone <span class="text-muted fw-normal">(optional)</span>
+                <label for="phone" class="form-label fw-semibold text-secondary small">
+                    Phone Number <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">(optional)</span>
                 </label>
                 <input id="phone" type="text" name="phone" value="{{ old('phone') }}"
                        class="form-control @error('phone') is-invalid @enderror"
@@ -54,8 +54,8 @@
             </div>
 
             <div class="col-md-6">
-                <label for="birthdate" class="form-label fw-semibold">
-                    Birthdate <span class="text-muted fw-normal">(optional)</span>
+                <label for="birthdate" class="form-label fw-semibold text-secondary small">
+                    Birthdate <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">(optional)</span>
                 </label>
                 <input id="birthdate" type="date" name="birthdate" value="{{ old('birthdate') }}"
                        class="form-control @error('birthdate') is-invalid @enderror">
@@ -63,8 +63,8 @@
             </div>
 
             <div class="col-12">
-                <label for="address" class="form-label fw-semibold">
-                    Address <span class="text-muted fw-normal">(optional)</span>
+                <label for="address" class="form-label fw-semibold text-secondary small">
+                    Address <span class="text-muted fw-normal font-monospace" style="font-size: 0.75rem;">(optional)</span>
                 </label>
                 <input id="address" type="text" name="address" value="{{ old('address') }}"
                        class="form-control @error('address') is-invalid @enderror"
@@ -73,19 +73,17 @@
             </div>
         </div>
 
-        <hr class="my-3">
-
         {{-- Academic Information --}}
-        <p class="text-uppercase fw-bold small text-muted mb-2" style="letter-spacing:.05em; font-size:.72rem;">
-            <i class="bi bi-mortarboard me-1"></i> Academic Information
-        </p>
+        <h6 class="text-uppercase fw-bold text-success mb-3 d-flex align-items-center gap-1.5 pt-2 border-top" style="letter-spacing:.05em; font-size:.8rem;">
+            <i class="bi bi-mortarboard-fill fs-5"></i> Academic Information
+        </h6>
 
-        <div class="row g-3 mb-3">
+        <div class="row g-3 mb-4">
             <div class="col-md-7">
-                <label for="strand_id" class="form-label fw-semibold">Strand</label>
+                <label for="strand_id" class="form-label fw-semibold text-secondary small">Strand <span class="text-danger">*</span></label>
                 <select id="strand_id" name="strand_id"
                         class="form-select @error('strand_id') is-invalid @enderror" required>
-                    <option value="" disabled {{ old('strand_id') ? '' : 'selected' }}>— Select your strand —</option>
+                    <option value="" disabled {{ old('strand_id') ? '' : 'selected' }}>— Select strand —</option>
                     @foreach ($strands as $strand)
                         <option value="{{ $strand->id }}" {{ old('strand_id') == $strand->id ? 'selected' : '' }}>
                             {{ $strand->strand_code }} — {{ $strand->strand_name }}
@@ -96,7 +94,7 @@
             </div>
 
             <div class="col-md-5">
-                <label for="grade_level" class="form-label fw-semibold">Grade Level</label>
+                <label for="grade_level" class="form-label fw-semibold text-secondary small">Grade Level <span class="text-danger">*</span></label>
                 <select id="grade_level" name="grade_level"
                         class="form-select @error('grade_level') is-invalid @enderror" required>
                     <option value="" disabled {{ old('grade_level') ? '' : 'selected' }}>— Select grade —</option>
@@ -107,65 +105,67 @@
             </div>
         </div>
 
-        <hr class="my-3">
-
         {{-- Password --}}
-        <p class="text-uppercase fw-bold small text-muted mb-2" style="letter-spacing:.05em; font-size:.72rem;">
-            <i class="bi bi-lock me-1"></i> Set Your Password
-        </p>
+        <h6 class="text-uppercase fw-bold text-success mb-3 d-flex align-items-center gap-1.5 pt-2 border-top" style="letter-spacing:.05em; font-size:.8rem;">
+            <i class="bi bi-lock-fill fs-5"></i> Set Your Password
+        </h6>
 
-        <div class="row g-3">
+        <div class="row g-3 mb-4">
             <div class="col-md-6">
-                <label for="password" class="form-label fw-semibold">Password</label>
+                <label for="password" class="form-label fw-semibold text-secondary small">Password <span class="text-danger">*</span></label>
                 <div class="input-password-group">
                     <input id="password" type="password" name="password"
                            class="form-control @error('password') is-invalid @enderror"
                            placeholder="At least 8 characters"
                            required autocomplete="new-password">
-                    <button type="button" class="password-toggle" id="toggleRegPassword"
+                    <button type="button" class="password-toggle text-muted" id="toggleRegPassword"
                             aria-label="Toggle password visibility">
                         <i class="bi bi-eye" id="toggleRegPasswordIcon"></i>
                     </button>
                     @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
-                {{-- Password hint based on actual backend validation: Rules\Password::defaults() = min 8 chars --}}
-                <p class="password-hint">
-                    <i class="bi bi-info-circle-fill text-primary opacity-75"></i>
-                    Must be at least <strong>8 characters</strong>. Any combination of letters, numbers, or symbols is allowed.
+                <p class="password-hint small text-muted mt-2 d-flex align-items-start gap-1">
+                    <i class="bi bi-info-circle-fill text-success opacity-75"></i>
+                    <span>Minimum <strong>8 characters</strong> required.</span>
                 </p>
             </div>
 
             <div class="col-md-6">
-                <label for="password_confirmation" class="form-label fw-semibold">Confirm Password</label>
+                <label for="password_confirmation" class="form-label fw-semibold text-secondary small">Confirm Password <span class="text-danger">*</span></label>
                 <div class="input-password-group">
                     <input id="password_confirmation" type="password" name="password_confirmation"
-                           class="form-control" placeholder="Re-enter your password"
+                           class="form-control" placeholder="Re-enter password"
                            required autocomplete="new-password">
-                    <button type="button" class="password-toggle" id="toggleRegConfirm"
+                    <button type="button" class="password-toggle text-muted" id="toggleRegConfirm"
                             aria-label="Toggle confirm password visibility">
                         <i class="bi bi-eye" id="toggleRegConfirmIcon"></i>
                     </button>
                 </div>
-                <p class="password-hint">
+                <p class="password-hint small text-muted mt-2 d-flex align-items-start gap-1">
                     <i class="bi bi-shield-check text-success opacity-75"></i>
-                    Must match the password you entered above.
+                    <span>Must match the password entered on the left.</span>
                 </p>
             </div>
         </div>
 
         {{-- Footer --}}
-        <div class="d-flex align-items-center justify-content-between mt-4 pt-2 border-top">
-            <a class="small text-muted text-decoration-none" href="{{ route('login') }}">
-                <i class="bi bi-arrow-left me-1"></i> Already have an account?
+        <div class="d-flex align-items-center justify-content-between mt-4 pt-3 border-top flex-wrap gap-2">
+            <a class="small text-decoration-none text-success fw-bold" href="{{ route('login') }}">
+                <i class="bi bi-arrow-left"></i> Already have an account? Log In
             </a>
-            <button type="submit" class="btn btn-primary px-4" data-loading-text="Creating account…">
-                <i class="bi bi-person-plus me-1"></i> Create Account
+            <button type="submit" class="btn btn-auth-student px-4">
+                <i class="bi bi-person-plus-fill"></i> Create Account
             </button>
         </div>
     </form>
 
+    <p class="text-center small text-muted mt-4 mb-0">
+        <a href="{{ route('landing') }}" class="text-success fw-semibold text-decoration-none">
+            <i class="bi bi-arrow-left"></i> Back to portal selection
+        </a>
+    </p>
+
     <script>
-        // Show/hide password toggles — UI only
         function setupToggle(btnId, inputId, iconId) {
             document.getElementById(btnId)?.addEventListener('click', function () {
                 const input = document.getElementById(inputId);

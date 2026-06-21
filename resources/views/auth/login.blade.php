@@ -1,20 +1,25 @@
 @extends('layouts.guest')
-@section('title', 'Log In')
+@section('title', request('portal') === 'registrar' ? 'Registrar Log In' : 'Log In')
+@section('auth-theme', request('portal') === 'registrar' ? 'auth-body--registrar' : 'auth-body--student')
+@section('auth-subtitle', request('portal') === 'registrar' ? 'Registrar Portal — Staff Access Only' : 'SHS Online Enrollment Portal')
+@section('brand-icon-class', request('portal') === 'registrar' ? 'auth-brand-icon--registrar' : '')
+@section('brand-icon', request('portal') === 'registrar' ? 'bi-shield-lock-fill' : 'bi-mortarboard-fill')
 @section('content')
 
     @if (session('status'))
-        <div class="alert alert-success d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-check-circle-fill"></i>
-            {{ session('status') }}
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 mb-3 border-0 shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <div>{{ session('status') }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login', request('portal') === 'registrar' ? ['portal' => 'registrar'] : []) }}">
         @csrf
 
         {{-- Email --}}
         <div class="mb-3">
-            <label for="email" class="form-label fw-semibold">Email address</label>
+            <label for="email" class="form-label fw-semibold text-secondary small">Email Address</label>
             <div class="input-group">
                 <span class="input-group-text bg-light border-end-0">
                     <i class="bi bi-envelope text-muted"></i>
@@ -32,9 +37,10 @@
         {{-- Password --}}
         <div class="mb-3">
             <div class="d-flex justify-content-between align-items-center mb-1">
-                <label for="password" class="form-label fw-semibold mb-0">Password</label>
+                <label for="password" class="form-label fw-semibold text-secondary small mb-0">Password</label>
                 @if (Route::has('password.request'))
-                    <a class="small text-primary text-decoration-none" href="{{ route('password.request') }}">
+                    <a class="small fw-semibold @if(request('portal') === 'registrar') auth-registrar-link @else text-success text-decoration-none @endif"
+                       href="{{ route('password.request', request('portal') === 'registrar' ? ['portal' => 'registrar'] : []) }}">
                         Forgot password?
                     </a>
                 @endif
@@ -44,7 +50,7 @@
                        class="form-control @error('password') is-invalid @enderror"
                        placeholder="Enter your password"
                        required autocomplete="current-password">
-                <button type="button" class="password-toggle" id="toggleLoginPassword"
+                <button type="button" class="password-toggle text-muted" id="toggleLoginPassword"
                         aria-label="Toggle password visibility">
                     <i class="bi bi-eye" id="toggleLoginPasswordIcon"></i>
                 </button>
@@ -52,9 +58,8 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            {{-- Password hint based on actual backend rules: minimum 8 characters --}}
-            <p class="password-hint">
-                <i class="bi bi-info-circle-fill text-primary opacity-75"></i>
+            <p class="password-hint small text-muted mt-2 d-flex align-items-start gap-1">
+                <i class="bi bi-info-circle-fill @if(request('portal') === 'registrar') auth-registrar-accent @else text-success @endif opacity-75"></i>
                 Your password must be at least 8 characters long.
             </p>
         </div>
@@ -62,24 +67,42 @@
         {{-- Remember me --}}
         <div class="mb-4 form-check">
             <input id="remember_me" type="checkbox" name="remember" class="form-check-input">
-            <label for="remember_me" class="form-check-label text-muted">Remember me</label>
+            <label for="remember_me" class="form-check-label text-muted small">Remember me</label>
         </div>
 
         {{-- Submit --}}
-        <div class="d-grid">
-            <button type="submit" class="btn btn-primary btn-lg">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Log In
-            </button>
+        <div class="d-grid mb-3">
+            @if(request('portal') === 'registrar')
+                <button type="submit" class="btn btn-lg btn-auth-registrar">
+                    <i class="bi bi-box-arrow-in-right"></i> Log In
+                </button>
+            @else
+                <button type="submit" class="btn btn-lg btn-auth-student">
+                    <i class="bi bi-box-arrow-in-right"></i> Log In
+                </button>
+            @endif
         </div>
 
-        <p class="text-center small text-muted mt-3 mb-0">
-            Don't have an account?
-            <a href="{{ route('register') }}" class="text-primary fw-semibold text-decoration-none">Register here</a>
-        </p>
+        @if(request('portal') !== 'registrar')
+            <p class="text-center small text-muted mt-4 mb-0">
+                Don't have an account?
+                <a href="{{ route('register') }}" class="text-success fw-semibold text-decoration-none">Register here</a>
+            </p>
+            <p class="text-center small text-muted mt-2 mb-0">
+                <a href="{{ route('landing') }}" class="text-success fw-semibold text-decoration-none">
+                    <i class="bi bi-arrow-left"></i> Back to portal selection
+                </a>
+            </p>
+        @else
+            <p class="text-center small text-muted mt-4 mb-0">
+                <a href="{{ route('landing') }}" class="auth-registrar-link fw-semibold">
+                    <i class="bi bi-arrow-left"></i> Back to portal selection
+                </a>
+            </p>
+        @endif
     </form>
 
     <script>
-        // Show/hide password toggle — UI only, no backend logic
         document.getElementById('toggleLoginPassword')?.addEventListener('click', function () {
             const input = document.getElementById('password');
             const icon  = document.getElementById('toggleLoginPasswordIcon');

@@ -23,17 +23,17 @@ a, .btn { transition: all .18s ease !important; }
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, $primary 0%, lighten($primary, 20%) 100%);
+    background: linear-gradient(135deg, #0d6e5f 0%, #1aa086 100%);
     border-radius: 14px;
     color: #fff;
     font-size: 1.6rem;
-    box-shadow: 0 4px 14px rgba($primary, .35);
+    box-shadow: 0 4px 14px rgba(13, 110, 95, 0.35);
     margin-bottom: .75rem;
 }
 
 .guest-wrapper {
     min-height: 100vh;
-    background: linear-gradient(145deg, #e8edf8 0%, #f0f4f8 60%, #e8f0fe 100%);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -42,10 +42,11 @@ a, .btn { transition: all .18s ease !important; }
 
 .auth-card {
     width: 100%;
-    max-width: 460px;
+    max-width: 420px;
     border: none;
     border-radius: 1rem;
-    box-shadow: 0 8px 32px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.06);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    background: #fff;
     overflow: hidden;
 }
 
@@ -55,10 +56,9 @@ a, .btn { transition: all .18s ease !important; }
 }
 
 .auth-card .card-header {
-    background: linear-gradient(135deg, $primary 0%, darken($primary, 10%) 100%);
+    background: transparent;
     border-bottom: none;
-    padding: 1.5rem 2rem;
-    color: #fff;
+    padding: 1.5rem 2rem 0;
 }
 
 .auth-card .card-body {
@@ -70,6 +70,8 @@ a, .btn { transition: all .18s ease !important; }
     box-shadow: 0 1px 8px rgba(0,0,0,.12);
     padding-top: .6rem;
     padding-bottom: .6rem;
+    background-color: var(--portal-primary) !important;
+    transition: background-color 0.2s, filter 0.2s;
 }
 
 .navbar-brand {
@@ -81,40 +83,28 @@ a, .btn { transition: all .18s ease !important; }
 .sidebar {
     width: 230px;
     flex-shrink: 0;
-    background: #fff;
-    border-right: 1px solid rgba(0,0,0,.07);
     padding: 1.5rem 1rem;
     min-height: calc(100vh - 56px);
+    transition: background-color 0.2s, border-color 0.2s;
 
     .sidebar-label {
         font-size: .7rem;
         font-weight: 800;
         letter-spacing: .08em;
-        color: #9aa5b4;
         text-transform: uppercase;
         padding: 0 .5rem;
         margin-bottom: .5rem;
     }
 
-    .nav-link {
+    .sidebar-link {
         border-radius: .5rem;
         padding: .55rem .85rem;
         font-weight: 600;
-        color: #4a5568;
         display: flex;
         align-items: center;
         gap: .5rem;
-
-        &:hover {
-            background: rgba($primary, .06);
-            color: $primary;
-        }
-
-        &.active {
-            background: rgba($primary, .12);
-            color: $primary;
-            font-weight: 700;
-        }
+        text-decoration: none;
+        transition: all .18s ease !important;
 
         i { font-size: 1rem; }
     }
@@ -192,28 +182,225 @@ a, .btn { transition: all .18s ease !important; }
     &.stat-primary  { border-left-color: $primary; }
 }
 
-// ── Buttons ────────────────────────────────────────────────────────────────────
-.btn {
-    font-weight: 700;
-    letter-spacing: .01em;
+// ── Portal Theme and Dark Mode Styling ─────────────────────────────────────────
+
+body {
+    background-color: var(--portal-surface) !important;
+    color: #2d3748;
+    transition: background-color 0.2s, color 0.2s;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, $primary, darken($primary, 10%));
-    border-color: $primary;
-    box-shadow: 0 2px 8px rgba($primary, .3);
+/* Registrar styles */
+body.portal-registrar {
+    --portal-primary:  #1e3a5f;
+    --portal-accent:   #3a6ea5;
+    --portal-surface:  #f4f6f9;
+    --portal-border:   #dce3ec;
+    --portal-muted:    #6c7a8d;
+
+    .sidebar {
+        background-color: #fff !important;
+        border-right: 1px solid var(--portal-border);
+
+        .sidebar-label {
+            color: var(--portal-muted) !important;
+        }
+
+        .sidebar-link {
+            color: #4a5568;
+
+            &:hover {
+                background: rgba(30, 58, 95, 0.05);
+                color: var(--portal-primary);
+            }
+
+            &.active {
+                background: rgba(30, 58, 95, 0.12);
+                color: var(--portal-primary);
+                font-weight: 700;
+            }
+        }
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: var(--portal-primary) !important;
+        color: #fff !important;
+    }
+
+    .breadcrumb-item a {
+        color: var(--portal-primary);
+
+        &:hover {
+            color: var(--portal-accent);
+        }
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--portal-primary), var(--portal-accent)) !important;
+        border-color: var(--portal-primary) !important;
+        color: #fff !important;
+        box-shadow: 0 2px 6px rgba(30, 58, 95, 0.2) !important;
+
+        &:hover, &:focus, &:active {
+            background: linear-gradient(135deg, var(--portal-accent), var(--portal-primary)) !important;
+            border-color: var(--portal-accent) !important;
+            transform: translateY(-1px);
+        }
+    }
+
+    .btn-outline-primary {
+        border-color: var(--portal-primary) !important;
+        color: var(--portal-primary) !important;
+
+        &:hover, &:focus, &:active {
+            background-color: var(--portal-primary) !important;
+            color: #fff !important;
+        }
+    }
+}
+
+/* Student styles */
+body.portal-student {
+    --portal-primary:  #0d6e5f;
+    --portal-accent:   #1aa086;
+    --portal-surface:  #f0faf8;
+    --portal-border:   #c3e8e2;
+    --portal-muted:    #5a7a75;
+
+    .sidebar {
+        background-color: #fff !important;
+        border-right: 1px solid var(--portal-border);
+
+        .sidebar-label {
+            color: var(--portal-muted) !important;
+        }
+
+        .sidebar-link {
+            color: #4a5568;
+
+            &:hover {
+                background: rgba(13, 110, 95, 0.05);
+                color: var(--portal-primary);
+            }
+
+            &.active {
+                background: rgba(13, 110, 95, 0.12);
+                color: var(--portal-primary);
+                font-weight: 700;
+            }
+        }
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: var(--portal-primary) !important;
+        color: #fff !important;
+    }
+
+    .btn-success, .btn-primary {
+        background: linear-gradient(135deg, var(--portal-primary), var(--portal-accent)) !important;
+        border-color: var(--portal-primary) !important;
+        color: #fff !important;
+        box-shadow: 0 2px 6px rgba(13, 110, 95, 0.2) !important;
+
+        &:hover, &:focus, &:active {
+            background: linear-gradient(135deg, var(--portal-accent), var(--portal-primary)) !important;
+            border-color: var(--portal-accent) !important;
+            transform: translateY(-1px);
+        }
+    }
+
+    .btn-outline-success, .btn-outline-primary {
+        border-color: var(--portal-primary) !important;
+        color: var(--portal-primary) !important;
+
+        &:hover, &:focus, &:active {
+            background-color: var(--portal-primary) !important;
+            color: #fff !important;
+        }
+    }
+}
+
+/* Auth / Gateway backgrounds */
+.auth-body {
+    min-height: 100vh;
+
+    .password-toggle:hover {
+        color: #0d6e5f;
+    }
+}
+
+.auth-body--landing {
+    background: linear-gradient(160deg, #1a1f2e 0%, #1c2630 40%, #0f1f1c 100%) !important;
+}
+
+.auth-body--registrar {
+    background: linear-gradient(160deg, #0c1424 0%, #162d4a 55%, #1e3a5f 100%) !important;
+}
+
+.auth-body--student {
+    background: linear-gradient(160deg, #051a16 0%, #0d6e5f 50%, #1aa086 100%) !important;
+}
+
+// Registrar auth — in-card accents (no Bootstrap default blue)
+.auth-brand-icon--registrar {
+    background: linear-gradient(145deg, #162d4a 0%, #1e3a5f 100%) !important;
+    box-shadow: 0 4px 14px rgba(22, 45, 74, 0.35);
+}
+
+.auth-registrar-accent {
+    color: #1e3a5f !important;
+}
+
+.auth-registrar-link {
+    color: #2a5080 !important;
+    text-decoration: none;
 
     &:hover {
-        background: linear-gradient(135deg, darken($primary, 6%), darken($primary, 16%));
-        border-color: darken($primary, 8%);
-        box-shadow: 0 4px 14px rgba($primary, .4);
+        color: #1e3a5f !important;
+    }
+}
+
+.btn-auth-registrar {
+    background-color: #1e3a5f !important;
+    border-color: #1e3a5f !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(22, 45, 74, 0.25) !important;
+
+    &:hover, &:focus, &:active {
+        background-color: #162d4a !important;
+        border-color: #162d4a !important;
+        color: #fff !important;
         transform: translateY(-1px);
     }
 }
 
+.btn-auth-student {
+    background: linear-gradient(135deg, #0d6e5f 0%, #1aa086 100%) !important;
+    border: 0 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(13, 110, 95, 0.25) !important;
+
+    &:hover, &:focus, &:active {
+        background: linear-gradient(135deg, #0a5c50 0%, #158a72 100%) !important;
+        color: #fff !important;
+        transform: translateY(-1px);
+    }
+}
+
+// ── Buttons ────────────────────────────────────────────────────────────────────
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 700;
+    letter-spacing: .01em;
+    transition: all 0.2s ease !important;
+}
+
 // ── Landing page ───────────────────────────────────────────────────────────────
 .landing-hero {
-    background: linear-gradient(150deg, #e8edf8 0%, #f0f4f8 100%);
+    background: linear-gradient(160deg, #1a1f2e 0%, #1c2630 40%, #0f1f1c 100%);
     padding: 4rem 1rem 3rem;
     text-align: center;
 
