@@ -126,10 +126,10 @@
                 <div class="row g-3">
                     @foreach ($sections as $section)
                         <div class="col-md-6">
-                            <label class="card h-100 border rounded-3 p-3.5 card-hover" style="cursor: pointer;" for="section{{ $section->id }}">
+                            <label class="card h-100 border rounded-3 p-3 card-hover" style="cursor: pointer;" for="section{{ $section->id }}">
                                 <div class="card-body p-0">
                                     <div class="form-check d-flex align-items-start gap-2 mb-2">
-                                        <input class="form-check-input mt-1.5" type="radio" name="section_id"
+                                             <input class="form-check-input mt-1" type="radio" name="section_id"
                                                value="{{ $section->id }}" id="section{{ $section->id }}"
                                                {{ old('section_id') == $section->id ? 'checked' : '' }} required>
                                         <div class="form-check-label flex-grow-1">
@@ -144,8 +144,9 @@
                                     </div>
                                     
                                     <details class="border-top pt-2">
-                                        <summary class="small text-success fw-bold" style="cursor: pointer;">
-                                            <i class="bi bi-eye"></i> View Subjects
+                                        <summary class="small text-success fw-bold d-inline-flex align-items-center gap-1" style="cursor: pointer;">
+                                            <i class="bi bi-eye"></i>
+                                            <span>View Subjects</span>
                                         </summary>
                                         <ul class="small text-muted mt-2 mb-0 ps-3">
                                             @foreach ($section->subjects as $subject)
@@ -170,5 +171,22 @@
             </form>
         @endif
     @endif
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const radios = document.querySelectorAll('input[name="section_id"]');
+            function updateSelected() {
+                document.querySelectorAll('label.card').forEach(l => l.classList.remove('selected'));
+                const checked = document.querySelector('input[name="section_id"]:checked');
+                if (checked) {
+                    const lab = checked.closest('label.card');
+                    if (lab) lab.classList.add('selected');
+                }
+            }
+            radios.forEach(r => r.addEventListener('change', updateSelected));
+            // initialize on page load
+            updateSelected();
+        });
+    </script>
 
 @endsection
