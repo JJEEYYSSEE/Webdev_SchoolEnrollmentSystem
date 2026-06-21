@@ -70,6 +70,10 @@
                    class="sidebar-link {{ request()->routeIs('student.showSection') ? 'active' : '' }}">
                     <i class="bi bi-collection"></i> My Section
                 </a>
+                <a href="{{ route('student.showSchedule') }}"
+                   class="sidebar-link {{ request()->routeIs('student.showSchedule') ? 'active' : '' }}">
+                    <i class="bi bi-calendar-week"></i> My Schedule
+                </a>
                 <a href="{{ route('student.showSubjects') }}"
                    class="sidebar-link {{ request()->routeIs('student.showSubjects') ? 'active' : '' }}">
                     <i class="bi bi-book-fill"></i> My Subjects

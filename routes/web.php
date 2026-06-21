@@ -59,6 +59,7 @@ Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth'
     Route::get('/enrollment/status', [StudentEnrollment::class, 'showEnrollStatus'])->name('showEnrollStatus');
 
     Route::get('/section', [StudentSection::class, 'showSection'])->name('showSection');
+    Route::get('/schedule', [StudentSection::class, 'showSchedule'])->name('showSchedule');
     Route::get('/subjects', [StudentSubject::class, 'showSubjects'])->name('showSubjects');
     Route::get('/records', [StudentRecord::class, 'showRecords'])->name('showRecords');
 });
@@ -104,6 +105,8 @@ Route::group(['prefix' => 'registrar', 'as' => 'registrar.', 'middleware' => ['a
         Route::get('/', [RegistrarSection::class, 'showSections'])->name('showSections');
         Route::get('/create', [RegistrarSection::class, 'showCreateSection'])->name('showCreateSection');
         Route::post('/', [RegistrarSection::class, 'postCreateSection'])->name('postCreateSection');
+        Route::get('/{section}/schedule', [RegistrarSection::class, 'showSchedule'])->name('showSchedule');
+        Route::post('/{section}/schedule', [RegistrarSection::class, 'generateSchedule'])->name('generateSchedule');
         Route::get('/{section}', [RegistrarSection::class, 'showSection'])->name('showSection');
         Route::get('/{section}/edit', [RegistrarSection::class, 'showEditSection'])->name('showEditSection');
         Route::put('/{section}', [RegistrarSection::class, 'updateSection'])->name('updateSection');

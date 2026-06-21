@@ -27,4 +27,21 @@ class SectionController extends Controller
 
         return view('student.section', compact('student', 'schoolYear', 'enrollment', 'section'));
     }
+
+    // Weekly class schedule for the student's section (read-only).
+    public function showSchedule(Request $request)
+    {
+        $student    = Auth::user()->student;
+        $schoolYear = SchoolYear::active();
+
+        $enrollment = $student->enrollments()
+            ->with(['section.subjects', 'section.strand'])
+            ->when($schoolYear, fn ($q) => $q->whereHas('section', fn ($s) => $s->where('school_year_id', $schoolYear->id)))
+            ->latest('submitted_at')
+            ->first();
+
+        $section = $enrollment?->section;
+
+        return view('student.schedule', compact('student', 'schoolYear', 'enrollment', 'section'));
+    }
 }

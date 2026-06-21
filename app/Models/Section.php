@@ -28,7 +28,15 @@ class Section extends Model
 
     public function subjects()
     {
-        return $this->belongsToMany(Subject::class, 'section_subjects');
+        return $this->belongsToMany(Subject::class, 'section_subjects')
+            ->withPivot('day_of_week', 'start_time', 'end_time', 'room')
+            ->withTimestamps();
+    }
+
+    /** True once a weekly schedule has been generated for this section. */
+    public function hasSchedule(): bool
+    {
+        return $this->subjects()->whereNotNull('section_subjects.start_time')->exists();
     }
 
     public function enrollments()

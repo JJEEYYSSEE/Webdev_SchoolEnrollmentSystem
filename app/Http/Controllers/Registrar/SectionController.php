@@ -8,6 +8,7 @@ use App\Models\SchoolYear;
 use App\Models\Section;
 use App\Models\Strand;
 use App\Models\Subject;
+use App\Services\ScheduleGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -103,6 +104,29 @@ class SectionController extends Controller
 
         return redirect()->route('registrar.sections.showSections')
             ->with('success', 'Section deleted.');
+    }
+
+    /** Show a section's generated weekly timetable. */
+    public function showSchedule(Request $request, $section)
+    {
+        $section = Section::with(['strand', 'schoolYear', 'subjects'])->findOrFail($section);
+
+        return view('registrar.sections.schedule', compact('section'));
+    }
+
+    /** Auto-generate (or regenerate) the section's weekly schedule. */
+    public function generateSchedule(Request $request, $section, ScheduleGenerator $generator)
+    {
+        $section = Section::with('subjects')->findOrFail($section);
+
+        $count = $generator->generate($section);
+
+        AuditLog::record('generated_schedule', 'Section', $section->id, 'Generated schedule for '.$section->section_name);
+
+        return redirect()->route('registrar.sections.showSchedule', $section->id)
+            ->with('success', $count
+                ? "Schedule generated for {$count} subject(s)."
+                : 'Add subjects to this section first, then generate the schedule.');
     }
 
     /** Shared validation for create/update. */
