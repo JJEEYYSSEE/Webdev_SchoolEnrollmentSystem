@@ -162,6 +162,17 @@ a, .btn { transition: all .18s ease !important; }
     }
 }
 
+/* Selected card state for radio-style cards (enrollment form) */
+.card.selected {
+    border-color: var(--portal-primary);
+    box-shadow: 0 8px 24px rgba(30,58,95,0.08) !important;
+    transform: translateY(-2px);
+}
+
+details summary { list-style: none; }
+details summary::-webkit-details-marker { display: none; }
+details[open] summary { color: var(--portal-primary); }
+
 // ── Tables ─────────────────────────────────────────────────────────────────────
 .table th {
     font-size: .78rem;
