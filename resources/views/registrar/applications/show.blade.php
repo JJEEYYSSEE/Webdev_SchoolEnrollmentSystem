@@ -75,7 +75,11 @@
                     @forelse ($a->documents as $doc)
                         <a href="{{ $doc->url() }}" target="_blank"
                            class="d-flex align-items-center justify-content-between border rounded-3 p-2 mb-2 text-decoration-none">
-                            <span class="small text-dark"><i class="bi bi-file-earmark-text me-1 text-primary"></i>{{ $doc->original_name ?? $doc->type }}</span>
+                            <span class="small text-dark">
+                                <i class="bi bi-file-earmark-text me-1 text-primary"></i>
+                                <strong>{{ $doc->label() }}</strong>
+                                <span class="text-muted">— {{ $doc->original_name ?? 'file' }}</span>
+                            </span>
                             <i class="bi bi-box-arrow-up-right text-muted"></i>
                         </a>
                     @empty

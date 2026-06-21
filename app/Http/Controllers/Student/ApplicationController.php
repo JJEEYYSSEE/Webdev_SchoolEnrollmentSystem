@@ -14,13 +14,7 @@ use Illuminate\View\View;
 class ApplicationController extends Controller
 {
     /** Required admission documents: type => human label. */
-    private array $documentTypes = [
-        'sf10'       => 'SF10 / Form 137',
-        'sf9'        => 'SF9 / Report Card (Grade 10)',
-        'good_moral' => 'Certificate of Good Moral Character',
-        'psa'        => 'PSA Birth Certificate',
-        'photo'      => '2x2 ID Photo',
-    ];
+    private array $documentTypes = ApplicationDocument::TYPES;
 
     /** Show the wizard (draft/invalid) or bounce to the status page (submitted). */
     public function show(Request $request): View|RedirectResponse
