@@ -158,7 +158,7 @@
             <a class="small text-muted text-decoration-none" href="{{ route('login') }}">
                 <i class="bi bi-arrow-left me-1"></i> Already have an account?
             </a>
-            <button type="submit" class="btn btn-primary px-4">
+            <button type="submit" class="btn btn-primary px-4" data-loading-text="Creating account…">
                 <i class="bi bi-person-plus me-1"></i> Create Account
             </button>
         </div>

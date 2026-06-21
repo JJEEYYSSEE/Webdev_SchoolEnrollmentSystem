@@ -25,5 +25,7 @@
             </div>
         </div>
     </div>
+
+    @include('partials.submit-loading')
 </body>
 </html>

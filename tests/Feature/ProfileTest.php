@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Student;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -77,6 +79,29 @@ class ProfileTest extends TestCase
 
         $this->assertGuest();
         $this->assertNull($user->fresh());
+    }
+
+    public function test_student_with_enrollments_can_delete_their_account(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+
+        $student = Student::has('enrollments')->firstOrFail();
+        $user = $student->user;
+
+        $response = $this
+            ->actingAs($user)
+            ->delete('/profile', [
+                'password' => 'password',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/');
+
+        $this->assertGuest();
+        $this->assertNull($user->fresh());
+        $this->assertDatabaseMissing('students', ['id' => $student->id]);
+        $this->assertDatabaseMissing('enrollments', ['student_id' => $student->id]);
     }
 
     public function test_correct_password_must_be_provided_to_delete_account(): void

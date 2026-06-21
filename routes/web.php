@@ -34,7 +34,7 @@ Route::get('/two-factor-challenge', [TwoFactorController::class, 'showChallenge'
 Route::post('/two-factor-challenge', [TwoFactorController::class, 'postChallenge'])->name('two-factor.postChallenge');
 
 // Student Routes — must be authenticated and role=student
-Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth', 'role:student']], function () {
+Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth', 'verified', 'role:student']], function () {
     Route::get('/dashboard', [StudentDashboard::class, 'showDashboard'])->name('showDashboard');
 
     Route::get('/enroll', [StudentEnrollment::class, 'showEnrollForm'])->name('showEnrollForm');
@@ -47,7 +47,7 @@ Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth'
 });
 
 // Registrar Routes — must be authenticated and role=registrar
-Route::group(['prefix' => 'registrar', 'as' => 'registrar.', 'middleware' => ['auth', 'role:registrar']], function () {
+Route::group(['prefix' => 'registrar', 'as' => 'registrar.', 'middleware' => ['auth', 'verified', 'role:registrar']], function () {
     Route::get('/dashboard', [RegistrarDashboard::class, 'showDashboard'])->name('showDashboard');
 
     // Semester / school year management
@@ -112,6 +112,6 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         return redirect()->route('registrar.showDashboard');
     }
     return redirect('/');
-})->middleware('auth')->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 require __DIR__.'/auth.php';

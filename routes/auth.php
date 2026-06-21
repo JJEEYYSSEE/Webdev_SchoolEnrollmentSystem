@@ -54,6 +54,16 @@ Route::middleware('auth')->group(function () {
 
     Route::put('password', [PasswordController::class, 'update'])->name('password.update');
 
+    // Email-OTP confirmation for a profile password change
+    Route::get('password/otp', [PasswordController::class, 'showOtp'])
+        ->name('password.otp');
+    Route::post('password/otp', [PasswordController::class, 'confirmOtp'])
+        ->middleware('throttle:6,1')
+        ->name('password.otp.confirm');
+    Route::post('password/otp/resend', [PasswordController::class, 'resendOtp'])
+        ->middleware('throttle:6,1')
+        ->name('password.otp.resend');
+
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
 });

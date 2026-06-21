@@ -1,6 +1,10 @@
 <section>
     <h5 class="mb-1 fw-bold">Update Password</h5>
-    <p class="text-muted small mb-4">Ensure your account is using a long, random password to stay secure.</p>
+    <p class="text-muted small mb-2">Ensure your account is using a long, random password to stay secure.</p>
+    <p class="text-muted small mb-4 d-flex align-items-start gap-1">
+        <i class="bi bi-shield-lock text-primary opacity-75"></i>
+        For security, we'll email a 6-digit verification code to confirm this change before it takes effect.
+    </p>
 
     <form method="post" action="{{ route('password.update') }}">
         @csrf

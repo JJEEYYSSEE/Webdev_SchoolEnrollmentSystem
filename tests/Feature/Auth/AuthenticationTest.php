@@ -27,7 +27,8 @@ class AuthenticationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // Login redirects by role; a default (non-registrar) user lands on the student dashboard.
+        $response->assertRedirect(route('student.showDashboard', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void

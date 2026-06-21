@@ -51,5 +51,6 @@
         @yield('content')
     </main>
 
+    @include('partials.submit-loading')
 </body>
 </html>
