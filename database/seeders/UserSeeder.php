@@ -15,6 +15,7 @@ class UserSeeder extends Seeder
             'name'              => 'Liza Fernandez',
             'email'             => 'registrar1@school.edu.ph',
             'email_verified_at' => now(),
+            'school_id'         => 'REG-0001',   // staff ID login
             'password'          => Hash::make('password'),
             'role'              => 'registrar',
             'created_at'        => now(),
@@ -24,6 +25,7 @@ class UserSeeder extends Seeder
             'name'              => 'Mark Villanueva',
             'email'             => 'registrar2@school.edu.ph',
             'email_verified_at' => now(),
+            'school_id'         => 'REG-0002',   // staff ID login
             'password'          => Hash::make('password'),
             'role'              => 'registrar',
             'created_at'        => now(),

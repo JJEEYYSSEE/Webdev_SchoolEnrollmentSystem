@@ -17,21 +17,31 @@
     <form method="POST" action="{{ route('login', request('portal') === 'registrar' ? ['portal' => 'registrar'] : []) }}">
         @csrf
 
-        {{-- Email --}}
+        {{-- School / Staff ID or Email --}}
+        @php
+            $isRegistrar = request('portal') === 'registrar';
+            $idLabel = $isRegistrar ? 'Staff ID or Email' : 'School ID or Email';
+            $idPlaceholder = $isRegistrar ? 'e.g. REG-0001' : 'e.g. 2026-00001 or you@example.com';
+        @endphp
         <div class="mb-3">
-            <label for="email" class="form-label fw-semibold text-secondary small">Email Address</label>
+            <label for="login" class="form-label fw-semibold text-secondary small">{{ $idLabel }}</label>
             <div class="input-group">
                 <span class="input-group-text bg-light border-end-0">
-                    <i class="bi bi-envelope text-muted"></i>
+                    <i class="bi bi-person-vcard text-muted"></i>
                 </span>
-                <input id="email" type="email" name="email" value="{{ old('email') }}"
-                       class="form-control border-start-0 ps-1 @error('email') is-invalid @enderror"
-                       placeholder="you@example.com"
+                <input id="login" type="text" name="login" value="{{ old('login') }}"
+                       class="form-control border-start-0 ps-1 @error('login') is-invalid @enderror"
+                       placeholder="{{ $idPlaceholder }}"
                        required autofocus autocomplete="username">
-                @error('email')
+                @error('login')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
+            @unless ($isRegistrar)
+                <p class="text-muted mt-1 mb-0" style="font-size:.75rem;">
+                    Applicants: log in with your email. Your School ID is issued once you're admitted.
+                </p>
+            @endunless
         </div>
 
         {{-- Password --}}

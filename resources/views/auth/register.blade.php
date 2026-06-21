@@ -1,5 +1,6 @@
 @extends('layouts.guest')
 @section('title', 'Student Registration')
+@section('card-class', 'auth-card--wide')
 @section('content')
 
     <p class="text-muted small mb-4 text-center">Create your account to start your Grade 11 application. You'll complete the full application form after verifying your email.</p>

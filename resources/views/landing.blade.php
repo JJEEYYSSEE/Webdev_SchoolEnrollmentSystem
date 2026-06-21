@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="SHS Online Enrollment Portal — Register, enroll, and track your academic records online.">
-    <title>{{ config('app.name', 'School Enrollment System') }} — SHS Online Portal</title>
+    <title>{{ config('school.short', 'CISHS') }} — SHS Online Portal</title>
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="auth-body auth-body--landing">
@@ -16,9 +16,9 @@
             <div class="auth-brand-icon mx-auto bg-white text-dark d-flex align-items-center justify-content-center rounded-circle shadow" style="width: 72px; height: 72px;">
                 <i class="bi bi-mortarboard-fill text-success fs-2"></i>
             </div>
-            <h1 class="fw-bold mt-3 mb-1 text-white display-6">{{ config('app.name', 'School Enrollment System') }}</h1>
+            <h1 class="fw-bold mt-3 mb-1 text-white display-6">{{ config('school.name', 'Cabrivex International Senior High School') }}</h1>
             <p class="text-white opacity-75 mb-0">Senior High School — Online Enrollment Portal</p>
-            <p class="text-white-50 small mb-0">Manage and track your SHS enrollment progress online.</p>
+            <p class="text-white-50 small mb-0">powered by {{ config('school.platform', 'E-Tala Enrollment System') }}</p>
         </header>
 
         {{-- Role selection --}}
@@ -86,7 +86,7 @@
         </main>
 
         <footer class="text-center text-white-50 small py-4 mt-auto border-top border-white border-opacity-10">
-            &copy; {{ date('Y') }} {{ config('app.name', 'School Enrollment System') }} &middot; All rights reserved
+            &copy; {{ date('Y') }} {{ config('school.name', 'Cabrivex International Senior High School') }} &middot; powered by {{ config('school.platform', 'E-Tala Enrollment System') }}
         </footer>
 
     </div>
