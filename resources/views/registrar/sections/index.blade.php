@@ -93,7 +93,7 @@
                                                 </div>
                                             </td>
                                             <td class="text-end px-4">
-                                                <div class="d-inline-flex gap-1.5">
+                                                <div class="d-inline-flex gap-2">
                                                     <a href="{{ route('registrar.sections.showSchedule', $section->id) }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
                                                         <i class="bi bi-calendar-week"></i> Schedule
                                                     </a>

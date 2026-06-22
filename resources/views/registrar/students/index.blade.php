@@ -110,7 +110,7 @@
                                             </td>
                                             <td class="text-secondary">{{ $student->user->email ?? '—' }}</td>
                                             <td class="text-end px-4">
-                                                <div class="d-inline-flex gap-1.5">
+                                                <div class="d-inline-flex gap-2">
                                                     <a href="{{ route('registrar.showStudent', $student->id) }}" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-1">
                                                         <i class="bi bi-eye"></i> View Profile
                                                     </a>

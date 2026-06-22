@@ -114,7 +114,7 @@
                             <td>
                                 @if ($sy->is_active)
                                     {{-- Switch active semester inline --}}
-                                    <form method="POST" action="{{ route('registrar.semester.setSemester', $sy->id) }}" class="d-flex gap-1.5 align-items-center">
+                                    <form method="POST" action="{{ route('registrar.semester.setSemester', $sy->id) }}" class="d-flex gap-2 align-items-center">
                                         @csrf 
                                         @method('PATCH')
                                         <select name="active_semester" class="form-select form-select-sm" style="width: auto;" onchange="this.form.submit()">
@@ -123,7 +123,11 @@
                                         </select>
                                     </form>
                                 @else
-                                    <span class="text-muted small fw-semibold">{{ $sy->active_semester }} Semester</span>
+                                    {{-- Semester picker for inactive rows (submit via the Set Active form below) --}}
+                                    <select name="active_semester" form="activateForm{{ $sy->id }}" class="form-select form-select-sm" style="width: auto;">
+                                        <option value="1st" {{ $sy->active_semester === '1st' ? 'selected' : '' }}>1st Sem</option>
+                                        <option value="2nd" {{ $sy->active_semester === '2nd' ? 'selected' : '' }}>2nd Sem</option>
+                                    </select>
                                 @endif
                             </td>
                             <td>
@@ -138,15 +142,11 @@
                                 @endif
                             </td>
                             <td class="text-end px-4">
-                                <div class="d-inline-flex gap-1.5 align-items-center">
+                                <div class="d-inline-flex gap-2 align-items-center">
                                     @unless ($sy->is_active)
-                                        <form method="POST" action="{{ route('registrar.semester.activate', $sy->id) }}" class="d-inline-flex gap-1 align-items-center">
+                                        <form id="activateForm{{ $sy->id }}" method="POST" action="{{ route('registrar.semester.activate', $sy->id) }}" class="d-inline">
                                             @csrf 
                                             @method('PATCH')
-                                            <select name="active_semester" class="form-select form-select-sm" style="width: auto;">
-                                                <option value="1st" {{ $sy->active_semester === '1st' ? 'selected' : '' }}>1st Sem</option>
-                                                <option value="2nd" {{ $sy->active_semester === '2nd' ? 'selected' : '' }}>2nd Sem</option>
-                                            </select>
                                             <button type="submit" class="btn btn-sm btn-outline-success d-inline-flex align-items-center gap-1">
                                                 <i class="bi bi-check-lg"></i> Set Active
                                             </button>

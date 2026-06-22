@@ -66,7 +66,7 @@
                                         <td class="fw-semibold text-secondary-emphasis">{{ $subject->subject_name }}</td>
                                         <td class="text-center fw-bold text-muted">{{ $subject->units }}</td>
                                         <td class="text-end px-4">
-                                            <div class="d-inline-flex gap-1.5">
+                                            <div class="d-inline-flex gap-2">
                                                 <a href="{{ route('registrar.subjects.showEditSubject', $subject->id) }}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
                                                     <i class="bi bi-pencil"></i> Edit
                                                 </a>
