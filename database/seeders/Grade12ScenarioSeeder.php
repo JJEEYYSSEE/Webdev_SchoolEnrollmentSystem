@@ -37,10 +37,9 @@ class Grade12ScenarioSeeder extends Seeder
             ['TVL',   'Macario Sakay',   'PM', 40, 18],
         ];
 
-        // Continue School IDs after the highest existing student number (portable).
-        $seq = (int) (DB::table('students')->pluck('student_number')
-            ->map(fn ($n) => (int) substr((string) $n, strrpos((string) $n, '-') + 1))
-            ->max() ?? 0);
+        // Grade 12 students were admitted the previous year, so their School IDs
+        // carry the 2025 prefix (incoming G11 admitted this year use 2026).
+        $seq = 0;
 
         foreach ($scenarios as [$strandCode, $name, $time, $capacity, $fill]) {
             $sid = $strandId($strandCode);
@@ -65,7 +64,7 @@ class Grade12ScenarioSeeder extends Seeder
             // Enroll students up to the target fill (approved).
             for ($i = 0; $i < $fill; $i++) {
                 $seq++;
-                $sn = '2026-'.str_pad((string) $seq, 5, '0', STR_PAD_LEFT);
+                $sn = '2025-'.str_pad((string) $seq, 5, '0', STR_PAD_LEFT);
                 $first = fake()->firstName();
                 $last  = fake()->lastName();
 
@@ -102,8 +101,8 @@ class Grade12ScenarioSeeder extends Seeder
         // reachable — seeded students above are already enrolled. Password: password
         $testers = [
             ['2026-11900', 'STEM', '11'],  // Grade 11 enroll form (no documents)
-            ['2026-12900', 'STEM', '12'],  // Grade 12 enroll form (SF9 + 2x2 photo)
-            ['2026-12901', 'ABM',  '12'],
+            ['2025-12900', 'STEM', '12'],  // Grade 12 enroll form (SF9 + 2x2 photo)
+            ['2025-12901', 'ABM',  '12'],
         ];
         foreach ($testers as [$sn, $code, $grade]) {
             $sid = $strandId($code);
