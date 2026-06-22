@@ -28,17 +28,17 @@
                             @php
                                 $badgeClass = match($enrollment->status) {
                                     'approved' => 'text-bg-success',
-                                    'rejected' => 'text-bg-danger',
-                                    default    => 'text-bg-warning',
+                                    'invalid'  => 'text-bg-warning',
+                                    default    => 'text-bg-secondary',
                                 };
                                 $statusIcon = match($enrollment->status) {
                                     'approved' => 'bi-check-circle-fill',
-                                    'rejected' => 'bi-x-circle-fill',
+                                    'invalid'  => 'bi-exclamation-triangle-fill',
                                     default    => 'bi-hourglass-split',
                                 };
                                 $statusHint = match($enrollment->status) {
                                     'approved' => 'Your enrollment is confirmed.',
-                                    'rejected' => 'See enrollment status for details.',
+                                    'invalid'  => 'Returned — fix and re-submit.',
                                     default    => 'Under registrar review.',
                                 };
                             @endphp
@@ -60,7 +60,7 @@
             <div class="row text-center gy-3 justify-content-between">
                 @php
                     $step1Class = $enrollment ? 'text-white' : 'opacity-50 text-white-50';
-                    $step2Class = ($enrollment && in_array($enrollment->status, ['pending', 'approved', 'rejected'])) ? 'text-white' : 'opacity-50 text-white-50';
+                    $step2Class = ($enrollment && in_array($enrollment->status, ['pending', 'approved', 'invalid'])) ? 'text-white' : 'opacity-50 text-white-50';
                     $step3Class = ($enrollment && $enrollment->status === 'approved') ? 'text-white' : 'opacity-50 text-white-50';
                 @endphp
                 <div class="col-md-4 d-flex align-items-center justify-content-center gap-2 {{ $step1Class }}">
@@ -68,7 +68,7 @@
                     <span class="fw-bold">Submit Form</span>
                 </div>
                 <div class="col-md-4 d-flex align-items-center justify-content-center gap-2 {{ $step2Class }}">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center @if($enrollment && in_array($enrollment->status, ['pending', 'approved', 'rejected'])) bg-white text-success @else bg-white bg-opacity-20 text-white @endif fw-bold" style="width: 28px; height: 28px;">2</div>
+                    <div class="rounded-circle d-flex align-items-center justify-content-center @if($enrollment && in_array($enrollment->status, ['pending', 'approved', 'invalid'])) bg-white text-success @else bg-white bg-opacity-20 text-white @endif fw-bold" style="width: 28px; height: 28px;">2</div>
                     <span class="fw-bold">Registrar Review</span>
                 </div>
                 <div class="col-md-4 d-flex align-items-center justify-content-center gap-2 {{ $step3Class }}">
@@ -150,7 +150,7 @@
         <i class="bi bi-lightning-fill text-warning"></i> Quick Actions
     </h6>
     <div class="row g-3">
-        @if (!$enrollment || $enrollment->status === 'rejected')
+        @if (!$enrollment || $enrollment->status === 'invalid')
             <div class="col-md-6">
                 <a href="{{ route('student.showEnrollForm') }}" class="card text-decoration-none h-100 border border-success border-opacity-25 card-hover bg-white">
                     <div class="card-body d-flex align-items-center gap-3 p-4">

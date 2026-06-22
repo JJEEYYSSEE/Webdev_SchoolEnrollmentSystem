@@ -20,7 +20,7 @@ class DashboardController extends Controller
 
         $pendingCount  = (clone $base)->where('status', 'pending')->count();
         $approvedCount = (clone $base)->where('status', 'approved')->count();
-        $rejectedCount = (clone $base)->where('status', 'rejected')->count();
+        $rejectedCount = (clone $base)->where('status', 'invalid')->count();
 
         // Approved enrollments grouped by strand
         $perStrand = DB::table('enrollments')

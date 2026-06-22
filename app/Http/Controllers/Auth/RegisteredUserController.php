@@ -50,7 +50,13 @@ class RegisteredUserController extends Controller
             'role'      => 'student',
         ]);
 
-        event(new Registered($user));
+        // Send the verification email, but don't let an SMTP/network failure
+        // crash registration — the user can resend it from the verify page.
+        try {
+            event(new Registered($user));
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         Auth::login($user);
 

@@ -35,8 +35,8 @@ class EnrollmentSeeder extends Seeder
             ['student_id' => $student('2026-00002'), 'section_id' => $stemKasipagan,   'status' => 'pending',  'remarks' => null,                               'approved_by' => null,  'reviewed_at' => null],
             // Pedro -> ABM G11 Kasipagan, approved
             ['student_id' => $student('2026-00003'), 'section_id' => $abmKasipagan,    'status' => 'approved', 'remarks' => null,                               'approved_by' => $reg1, 'reviewed_at' => now()],
-            // Ana -> STEM G11 Kapanatagan, rejected
-            ['student_id' => $student('2026-00004'), 'section_id' => $stemKapanatagan, 'status' => 'rejected', 'remarks' => 'Incomplete requirements — missing Form 138', 'approved_by' => $reg2, 'reviewed_at' => now()],
+            // Ana -> STEM G11 Kapanatagan, returned as invalid
+            ['student_id' => $student('2026-00004'), 'section_id' => $stemKapanatagan, 'status' => 'invalid', 'remarks' => 'Incomplete requirements — missing Form 138', 'approved_by' => $reg2, 'reviewed_at' => now()],
             // Jose -> ABM G11 Kasipagan, pending
             ['student_id' => $student('2026-00005'), 'section_id' => $abmKasipagan,    'status' => 'pending',  'remarks' => null,                               'approved_by' => null,  'reviewed_at' => null],
         ];

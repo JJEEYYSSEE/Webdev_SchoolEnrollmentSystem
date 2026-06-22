@@ -55,32 +55,6 @@
             </div>
         </div>
 
-    {{-- Gate: rejected — frozen for this semester --}}
-    @elseif ($blocked === 'rejected')
-        <div class="card border-0 border-start border-4 border-danger shadow-sm rounded-3 mb-4 bg-white">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-start gap-3">
-                    <div class="rounded-circle bg-danger bg-opacity-10 p-2.5 d-flex align-items-center justify-content-center text-danger">
-                        <i class="bi bi-exclamation-octagon-fill fs-3"></i>
-                    </div>
-                    <div class="flex-grow-1">
-                        <h5 class="fw-bold text-danger mb-2">Application Frozen</h5>
-                        <div class="p-3 bg-light rounded-3 text-dark mb-3 border">
-                            <strong>Registrar remarks:</strong> {{ $existing->remarks ?? 'No reason given.' }}
-                        </div>
-                        <p class="text-muted small mb-4">
-                            Your enrollment was rejected and is frozen for this semester. Please comply with the
-                            requirements above. You cannot re-apply on your own — the registrar must reopen your
-                            application once you've complied, or you may apply again next semester.
-                        </p>
-                        <a href="{{ route('student.showEnrollStatus') }}" class="btn btn-outline-danger d-inline-flex align-items-center gap-1">
-                            <i class="bi bi-eye"></i> View Detailed Status
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     {{-- Gate: already enrolled --}}
     @elseif ($blocked === 'enrolled')
         <div class="card border-0 shadow-sm rounded-3">
@@ -112,6 +86,17 @@
                 </div>
             </div>
         </div>
+
+        @if (!empty($invalidRemarks))
+            <div class="alert alert-warning d-flex align-items-start gap-2 border-0 shadow-sm mb-4">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <div>
+                    <strong>Your previous submission was returned for compliance.</strong>
+                    <div class="small">{{ $invalidRemarks }}</div>
+                    <div class="small text-muted mt-1">Fix the issue, then re-submit your enrollment below.</div>
+                </div>
+            </div>
+        @endif
 
         @if ($sections->isEmpty())
             <div class="card border-0 shadow-sm rounded-3">
