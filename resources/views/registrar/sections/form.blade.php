@@ -127,13 +127,11 @@
                 <div class="row g-3">
                     @foreach ($allSubjects as $subject)
                         <div class="col-md-6 col-lg-4">
-                            <label class="card h-100 border p-2.5 rounded-3 style-checkbox-card" style="cursor: pointer;">
-                                <div class="d-flex align-items-start gap-2.5">
-                                    <div class="form-check mb-0">
-                                        <input class="form-check-input" type="checkbox" name="subject_ids[]"
-                                               value="{{ $subject->id }}" id="subj{{ $subject->id }}"
-                                               {{ in_array($subject->id, old('subject_ids', $assigned)) ? 'checked' : '' }}>
-                                    </div>
+                            <label class="card h-100 border p-3 rounded-3 style-checkbox-card" style="cursor: pointer;">
+                                <div class="d-flex align-items-start gap-2">
+                                    <input class="form-check-input flex-shrink-0 mt-1" type="checkbox" name="subject_ids[]"
+                                           value="{{ $subject->id }}" id="subj{{ $subject->id }}"
+                                           {{ in_array($subject->id, old('subject_ids', $assigned)) ? 'checked' : '' }}>
                                     <div>
                                         <div class="fw-bold text-dark small">{{ $subject->subject_code }}</div>
                                         <div class="text-muted small" style="font-size: 0.75rem;">{{ $subject->subject_name }} ({{ $subject->units }} Units)</div>

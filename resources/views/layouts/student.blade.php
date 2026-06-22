@@ -84,9 +84,6 @@
                 </a>
             </nav>
 
-            <p class="text-muted mt-auto pt-4 mb-0" style="font-size:.7rem;">
-                powered by {{ config('school.platform', 'E-Tala Enrollment System') }}
-            </p>
         </aside>
 
         {{-- Main content --}}
@@ -95,6 +92,11 @@
         </div>
 
     </div>
+
+    {{-- Site Footer --}}
+    <footer class="portal-footer">
+        <span>Powered by <strong>{{ config('school.platform', 'E-Tala Enrollment System') }}</strong></span>
+    </footer>
 
 </body>
 </html>

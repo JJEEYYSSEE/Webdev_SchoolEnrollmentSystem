@@ -160,7 +160,7 @@
                                     <td class="text-muted">{{ $enrollment->submitted_at?->format('M d, Y') }}</td>
                                     <td class="text-end px-4">
                                         @if ($enrollment->status === 'pending')
-                                            <div class="d-inline-flex gap-1.5">
+                                            <div class="d-inline-flex gap-2">
                                                 <button type="submit"
                                                         formaction="{{ route('registrar.approveEnrollment', $enrollment->id) }}"
                                                         class="btn btn-sm btn-success d-inline-flex align-items-center gap-1">

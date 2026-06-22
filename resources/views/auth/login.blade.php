@@ -20,8 +20,8 @@
         {{-- School / Staff ID or Email --}}
         @php
             $isRegistrar = request('portal') === 'registrar';
-            $idLabel = $isRegistrar ? 'Staff ID or Email' : 'School ID or Email';
-            $idPlaceholder = $isRegistrar ? 'e.g. REG-0001' : 'e.g. 2026-00001 or you@example.com';
+            $idLabel = $isRegistrar ? 'Staff ID or Email' : 'School ID';
+            $idPlaceholder = $isRegistrar ? 'e.g. REG-0001' : 'e.g. 2026-00001';
         @endphp
         <div class="mb-3">
             <label for="login" class="form-label fw-semibold text-secondary small">{{ $idLabel }}</label>
@@ -39,7 +39,7 @@
             </div>
             @unless ($isRegistrar)
                 <p class="text-muted mt-1 mb-0" style="font-size:.75rem;">
-                    Applicants: log in with your email. Your School ID is issued once you're admitted.
+                    Applicants: use your email to log in until your School ID is issued after admission.
                 </p>
             @endunless
         </div>
