@@ -85,9 +85,16 @@ class EnrollmentController extends Controller
                 ->with('error', 'You already have an active enrollment this semester.');
         }
 
-        $validated = $request->validate([
-            'section_id' => ['required', 'exists:sections,id'],
-        ]);
+        $rules = ['section_id' => ['required', 'exists:sections,id']];
+
+        // Grade 12 must submit enrollment requirements (SF9 + 2x2 photo).
+        if ($student->grade_level === '12') {
+            $rules['documents']       = ['required', 'array'];
+            $rules['documents.sf9']   = ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'];
+            $rules['documents.photo'] = ['required', 'file', 'mimes:jpg,jpeg,png', 'max:5120'];
+        }
+
+        $validated = $request->validate($rules);
 
         $section = Section::with('subjects')->findOrFail($validated['section_id']);
 
@@ -102,13 +109,27 @@ class EnrollmentController extends Controller
                 ->with('error', 'That section is not available for your strand and grade level.');
         }
 
-        DB::transaction(function () use ($student, $section) {
+        DB::transaction(function () use ($student, $section, $request) {
             $enrollment = Enrollment::create([
                 'student_id'   => $student->id,
                 'section_id'   => $section->id,
                 'status'       => 'pending',
                 'submitted_at' => now(),
             ]);
+
+            // Grade 12: persist the uploaded enrollment requirements.
+            if ($student->grade_level === '12') {
+                foreach (array_keys(\App\Models\EnrollmentDocument::TYPES) as $type) {
+                    if ($file = $request->file("documents.$type")) {
+                        \App\Models\EnrollmentDocument::create([
+                            'enrollment_id' => $enrollment->id,
+                            'type'          => $type,
+                            'path'          => $file->store("enrollments/{$enrollment->id}", 'public'),
+                            'original_name' => $file->getClientOriginalName(),
+                        ]);
+                    }
+                }
+            }
 
             // Snapshot subjects from section_subjects → enrollment_subjects
             $rows = $section->subjects->map(fn ($subject) => [

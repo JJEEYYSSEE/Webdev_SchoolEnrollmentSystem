@@ -45,7 +45,7 @@ class EnrollmentController extends Controller
     public function showEnrollment(Request $request, $enrollment)
     {
         $enrollment = Enrollment::with([
-            'student.strand', 'student.user', 'section.strand', 'section.schoolYear', 'subjects', 'approver',
+            'student.strand', 'student.user', 'section.strand', 'section.schoolYear', 'subjects', 'approver', 'documents',
         ])->findOrFail($enrollment);
 
         return view('registrar.enrollments.show', compact('enrollment'));

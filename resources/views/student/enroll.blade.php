@@ -106,7 +106,7 @@
                 </div>
             </div>
         @else
-            <form method="POST" action="{{ route('student.postEnrollForm') }}">
+            <form method="POST" action="{{ route('student.postEnrollForm') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row g-3">
                     @foreach ($sections as $section)
@@ -147,9 +147,32 @@
                     @endforeach
                 </div>
 
+                @if ($student->grade_level === '12')
+                    <div class="card border-0 shadow-sm rounded-3 mt-4">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-paperclip me-1"></i> Enrollment Requirements (Grade 12)</h6>
+                            <p class="text-muted small mb-3">PDF, JPG, or PNG — max 5 MB each. Required to submit.</p>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="doc_sf9" class="form-label small fw-semibold">Grade 11 Report Card (SF9) <span class="text-danger">*</span></label>
+                                    <input type="file" id="doc_sf9" name="documents[sf9]" accept=".pdf,.jpg,.jpeg,.png"
+                                           class="form-control @error('documents.sf9') is-invalid @enderror" required>
+                                    @error('documents.sf9') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="doc_photo" class="form-label small fw-semibold">2x2 ID Photo <span class="text-danger">*</span></label>
+                                    <input type="file" id="doc_photo" name="documents[photo]" accept=".jpg,.jpeg,.png"
+                                           class="form-control @error('documents.photo') is-invalid @enderror" required>
+                                    @error('documents.photo') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
                     <a href="{{ route('student.showDashboard') }}" class="btn btn-outline-secondary">Cancel</a>
-                    <button type="submit" class="btn btn-success px-4 d-inline-flex align-items-center gap-1">
+                    <button type="submit" class="btn btn-success px-4 d-inline-flex align-items-center gap-1" data-loading-text="Submitting…">
                         <i class="bi bi-file-earmark-check"></i> Submit Enrollment
                     </button>
                 </div>

@@ -51,6 +51,11 @@ class Enrollment extends Model
         return $this->hasMany(EnrollmentSubject::class);
     }
 
+    public function documents()
+    {
+        return $this->hasMany(EnrollmentDocument::class);
+    }
+
     public function isPending(): bool
     {
         return $this->status === 'pending';
