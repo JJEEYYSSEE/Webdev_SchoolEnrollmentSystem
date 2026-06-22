@@ -49,12 +49,12 @@
                         @php
                             $badgeClass = match($enrollment->status) {
                                 'approved' => 'bg-success',
-                                'rejected' => 'bg-danger',
-                                default    => 'bg-warning text-dark',
+                                'invalid'  => 'bg-warning text-dark',
+                                default    => 'bg-secondary',
                             };
                             $statusIcon = match($enrollment->status) {
                                 'approved' => 'bi-check-circle-fill',
-                                'rejected' => 'bi-x-circle-fill',
+                                'invalid'  => 'bi-exclamation-triangle-fill',
                                 default    => 'bi-hourglass-split',
                             };
                         @endphp

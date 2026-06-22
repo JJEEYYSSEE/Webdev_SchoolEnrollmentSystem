@@ -5,12 +5,12 @@
     @php
         $badgeClass = match($enrollment->status) {
             'approved' => 'bg-success',
-            'rejected' => 'bg-danger',
-            default    => 'bg-warning text-dark',
+            'invalid'  => 'bg-warning text-dark',
+            default    => 'bg-secondary',
         };
         $statusIcon = match($enrollment->status) {
             'approved' => 'bi-check-circle-fill',
-            'rejected' => 'bi-x-circle-fill',
+            'invalid'  => 'bi-exclamation-triangle-fill',
             default    => 'bi-hourglass-split',
         };
     @endphp
@@ -161,10 +161,10 @@
         </div>
     </div>
 
-    {{-- Revert action — reopen a rejected application --}}
-    @if ($enrollment->status === 'rejected')
+    {{-- Revert action — reopen an invalid (returned) application --}}
+    @if ($enrollment->status === 'invalid')
         <div class="mt-4">
-            <button type="button" class="btn btn-warning d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#revertModal">
+            <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#revertModal">
                 <i class="bi bi-arrow-counterclockwise"></i> Reopen (Revert to Pending)
             </button>
         </div>
@@ -210,32 +210,33 @@
                 </button>
             </form>
 
-            <button type="button" class="btn btn-danger d-inline-flex align-items-center gap-1 px-4 py-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                <i class="bi bi-x-lg fs-5"></i> Reject Enrollment
+            <button type="button" class="btn btn-warning d-inline-flex align-items-center gap-1 px-4 py-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i> Return as Invalid
             </button>
         </div>
 
-        {{-- Reject modal with remarks --}}
+        {{-- Return-for-compliance modal with remarks --}}
         <div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog">
                 <form method="POST" action="{{ route('registrar.rejectEnrollment', $enrollment->id) }}" class="modal-content border-0 shadow-lg">
                     @csrf
-                    <div class="modal-header bg-danger text-white border-0 py-3">
+                    <div class="modal-header bg-warning text-dark border-0 py-3">
                         <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
-                            <i class="bi bi-exclamation-octagon-fill"></i> Reject Enrollment
+                            <i class="bi bi-exclamation-triangle-fill"></i> Return for Compliance
                         </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4">
+                        <p class="text-muted small">The student will be asked to fix the issue and re-submit. This is not a permanent rejection.</p>
                         <div class="mb-3">
-                            <label for="remarks" class="form-label fw-bold small text-muted">Reason for rejection (remarks)</label>
+                            <label for="remarks" class="form-label fw-bold small text-muted">What needs to be corrected?</label>
                             <textarea name="remarks" id="remarks" rows="3" class="form-control"
                                       placeholder="e.g. Incomplete requirements — missing Form 138" required></textarea>
                         </div>
                     </div>
                     <div class="modal-footer border-top-0 pt-0">
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-danger">Confirm Reject</button>
+                        <button type="submit" class="btn btn-warning">Return as Invalid</button>
                     </div>
                 </form>
             </div>

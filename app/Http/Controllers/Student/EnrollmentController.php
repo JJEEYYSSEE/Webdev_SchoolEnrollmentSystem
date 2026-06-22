@@ -29,19 +29,28 @@ class EnrollmentController extends Controller
             ]);
         }
 
-        // Gate: block if there's already an enrollment this semester.
-        // Rejected applications are frozen — student can't resubmit until the
-        // registrar reverts to pending, or until the next semester/year.
+        // Gate: block only if there's an active (pending/approved) enrollment.
+        // An "invalid" enrollment is returned-for-compliance — the student may
+        // fix the issue and re-submit, so it does NOT block the form.
         $existing = $this->activeEnrollment($student, $schoolYear);
         if ($existing) {
             return view('student.enroll', [
                 'student'    => $student,
                 'schoolYear' => $schoolYear,
                 'sections'   => collect(),
-                'blocked'    => $existing->status === 'rejected' ? 'rejected' : 'enrolled',
+                'blocked'    => 'enrolled',
                 'existing'   => $existing,
             ]);
         }
+
+        // Surface the registrar's remarks from a previously returned submission.
+        $invalid = $student->enrollments()
+            ->where('status', 'invalid')
+            ->whereHas('section', fn ($s) => $s
+                ->where('school_year_id', $schoolYear->id)
+                ->where('semester', $schoolYear->active_semester))
+            ->latest('submitted_at')
+            ->first();
 
         $sections = Section::with('subjects')
             ->where('school_year_id', $schoolYear->id)
@@ -51,10 +60,11 @@ class EnrollmentController extends Controller
             ->get();
 
         return view('student.enroll', [
-            'student'    => $student,
-            'schoolYear' => $schoolYear,
-            'sections'   => $sections,
-            'blocked'    => null,
+            'student'        => $student,
+            'schoolYear'     => $schoolYear,
+            'sections'       => $sections,
+            'blocked'        => null,
+            'invalidRemarks' => $invalid?->remarks,
         ]);
     }
 
@@ -70,12 +80,9 @@ class EnrollmentController extends Controller
                 ->with('error', 'Enrollment is currently closed.');
         }
 
-        if ($existing = $this->activeEnrollment($student, $schoolYear)) {
-            $msg = $existing->status === 'rejected'
-                ? 'Your application was rejected and is frozen for this semester. Comply with the registrar\'s feedback — only the registrar can reopen it.'
-                : 'You already have an active enrollment this semester.';
-
-            return redirect()->route('student.showEnrollStatus')->with('error', $msg);
+        if ($this->activeEnrollment($student, $schoolYear)) {
+            return redirect()->route('student.showEnrollStatus')
+                ->with('error', 'You already have an active enrollment this semester.');
         }
 
         $validated = $request->validate([
@@ -137,9 +144,9 @@ class EnrollmentController extends Controller
     }
 
     /**
-     * Existing enrollment for the student in the active year + semester.
-     * Includes rejected — a rejected application freezes the form for that
-     * semester; the student must wait (or the registrar reverts it to pending).
+     * Active enrollment for the student in the current year + semester.
+     * Only pending/approved block the form. An "invalid" (returned) enrollment
+     * does NOT block — the student can comply and re-submit.
      */
     private function activeEnrollment($student, ?SchoolYear $schoolYear): ?Enrollment
     {
@@ -148,7 +155,7 @@ class EnrollmentController extends Controller
         }
 
         return $student->enrollments()
-            ->whereIn('status', ['pending', 'approved', 'rejected'])
+            ->whereIn('status', ['pending', 'approved'])
             ->whereHas('section', fn ($s) => $s
                 ->where('school_year_id', $schoolYear->id)
                 ->where('semester', $schoolYear->active_semester))

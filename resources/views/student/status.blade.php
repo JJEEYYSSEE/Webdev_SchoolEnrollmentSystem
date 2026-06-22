@@ -47,18 +47,18 @@
         @php
             $badgeClass = match($enrollment->status) {
                 'approved' => 'bg-success',
-                'rejected' => 'bg-danger',
-                default    => 'bg-warning text-dark',
+                'invalid'  => 'bg-warning text-dark',
+                default    => 'bg-secondary',
             };
             $borderClass = match($enrollment->status) {
                 'approved' => 'border-success',
-                'rejected' => 'border-danger',
-                default    => 'border-warning',
+                'invalid'  => 'border-warning',
+                default    => 'border-secondary',
             };
             $icon = match($enrollment->status) {
                 'approved' => 'bi-check-circle-fill text-success',
-                'rejected' => 'bi-x-circle-fill text-danger',
-                default    => 'bi-hourglass-split text-warning',
+                'invalid'  => 'bi-exclamation-triangle-fill text-warning',
+                default    => 'bi-hourglass-split text-secondary',
             };
         @endphp
 
@@ -78,15 +78,14 @@
                         <div class="text-success small fw-semibold">
                             <i class="bi bi-check2 me-1"></i> Approved — your section and subjects are locked in. You may view your curriculum and schedules below.
                         </div>
-                    @elseif ($enrollment->status === 'rejected')
-                        <div class="p-3 bg-danger bg-opacity-10 border border-danger border-opacity-10 rounded-3 mb-3">
-                            <h6 class="fw-bold text-danger mb-1"><i class="bi bi-exclamation-octagon-fill"></i> Registrar Feedback:</h6>
-                            <p class="text-danger small mb-0">{{ $enrollment->remarks ?? 'No reason given.' }}</p>
+                    @elseif ($enrollment->status === 'invalid')
+                        <div class="p-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-3 mb-3">
+                            <h6 class="fw-bold text-warning-emphasis mb-1"><i class="bi bi-exclamation-triangle-fill"></i> Registrar Feedback:</h6>
+                            <p class="text-warning-emphasis small mb-0">{{ $enrollment->remarks ?? 'No reason given.' }}</p>
                         </div>
                         <p class="text-muted small mb-0">
-                            Your application is <strong>frozen for this semester</strong>. Please comply with the
-                            requirements above. You cannot re-apply on your own — the registrar must reopen your
-                            application once you've complied, or you may apply again next semester.
+                            Your submission was <strong>returned for compliance</strong>. Please fix the issue above,
+                            then <a href="{{ route('student.showEnrollForm') }}" class="fw-semibold">submit your enrollment again</a>.
                         </p>
                     @endif
                 </div>

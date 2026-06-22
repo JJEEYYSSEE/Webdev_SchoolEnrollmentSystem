@@ -92,19 +92,19 @@
             </div>
         </div>
 
-        {{-- Rejected Card --}}
+        {{-- Invalid / Returned Card --}}
         <div class="col-xl-3 col-md-6 col-12">
-            <div class="card h-100 border-0 border-start border-4 border-danger shadow-sm bg-white">
+            <div class="card h-100 border-0 border-start border-4 border-warning shadow-sm bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
-                        <p class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Rejected / Frozen</p>
-                        <h2 class="fw-bold text-danger mb-1">{{ $rejectedCount }}</h2>
-                        <a href="{{ route('registrar.showEnrollments', ['status' => 'rejected']) }}" class="small text-decoration-none text-danger d-inline-flex align-items-center gap-1">
-                            View Rejected <i class="bi bi-arrow-right-short"></i>
+                        <p class="text-uppercase fw-bold text-muted mb-1" style="font-size: 0.72rem; letter-spacing: 0.05em;">Invalid / Returned</p>
+                        <h2 class="fw-bold text-warning-emphasis mb-1">{{ $rejectedCount }}</h2>
+                        <a href="{{ route('registrar.showEnrollments', ['status' => 'invalid']) }}" class="small text-decoration-none text-warning-emphasis d-inline-flex align-items-center gap-1">
+                            View Invalid <i class="bi bi-arrow-right-short"></i>
                         </a>
                     </div>
-                    <div class="rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                        <i class="bi bi-x-circle-fill text-danger fs-4"></i>
+                    <div class="rounded-circle bg-warning bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        <i class="bi bi-exclamation-triangle-fill text-warning fs-4"></i>
                     </div>
                 </div>
             </div>
@@ -173,12 +173,12 @@
                                     @php
                                         $badgeClass = match($enrollment->status) {
                                             'approved' => 'bg-success',
-                                            'rejected' => 'bg-danger',
-                                            default    => 'bg-warning text-dark',
+                                            'invalid'  => 'bg-warning text-dark',
+                                            default    => 'bg-secondary',
                                         };
                                         $statusIcon = match($enrollment->status) {
                                             'approved' => 'bi-check-circle-fill',
-                                            'rejected' => 'bi-x-circle-fill',
+                                            'invalid'  => 'bi-exclamation-triangle-fill',
                                             default    => 'bi-hourglass-split',
                                         };
                                     @endphp

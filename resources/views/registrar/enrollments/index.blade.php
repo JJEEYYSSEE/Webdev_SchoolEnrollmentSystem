@@ -38,7 +38,7 @@
 
     {{-- Status filter tabs as modern pills --}}
     <ul class="nav nav-pills gap-2 mb-3">
-        @php $tabs = ['' => 'All', 'pending' => 'Pending', 'approved' => 'Approved', 'rejected' => 'Rejected']; @endphp
+        @php $tabs = ['' => 'All', 'pending' => 'Pending', 'approved' => 'Approved', 'invalid' => 'Invalid']; @endphp
         @foreach ($tabs as $value => $label)
             <li class="nav-item">
                 <a href="{{ route('registrar.showEnrollments', array_filter(['status' => $value, 'strand' => request('strand'), 'grade' => request('grade'), 'section' => request('section')])) }}"
@@ -143,12 +143,12 @@
                                         @php
                                             $badgeClass = match($enrollment->status) {
                                                 'approved' => 'bg-success',
-                                                'rejected' => 'bg-danger',
-                                                default    => 'bg-warning text-dark',
+                                                'invalid'  => 'bg-warning text-dark',
+                                                default    => 'bg-secondary',
                                             };
                                             $statusIcon = match($enrollment->status) {
                                                 'approved' => 'bi-check-circle-fill',
-                                                'rejected' => 'bi-x-circle-fill',
+                                                'invalid'  => 'bi-exclamation-triangle-fill',
                                                 default    => 'bi-hourglass-split',
                                             };
                                         @endphp
@@ -166,8 +166,8 @@
                                                         class="btn btn-sm btn-success d-inline-flex align-items-center gap-1">
                                                     <i class="bi bi-check-lg"></i> Approve
                                                 </button>
-                                                <a href="{{ route('registrar.showEnrollment', $enrollment->id) }}" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">
-                                                    <i class="bi bi-x-lg"></i> Reject
+                                                <a href="{{ route('registrar.showEnrollment', $enrollment->id) }}" class="btn btn-sm btn-outline-warning d-inline-flex align-items-center gap-1">
+                                                    <i class="bi bi-exclamation-triangle"></i> Review
                                                 </a>
                                             </div>
                                         @else

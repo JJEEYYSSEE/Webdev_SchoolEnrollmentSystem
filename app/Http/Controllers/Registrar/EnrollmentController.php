@@ -80,7 +80,8 @@ class EnrollmentController extends Controller
         return back()->with('success', 'Enrollment approved.');
     }
 
-    // Reject — set status, save remarks, log it.
+    // Mark invalid — return for compliance. The student can fix the issue and
+    // re-submit (this is not a hard rejection).
     public function rejectEnrollment(Request $request, $enrollment)
     {
         $enrollment = Enrollment::findOrFail($enrollment);
@@ -90,32 +91,32 @@ class EnrollmentController extends Controller
         }
 
         $validated = $request->validate([
-            'remarks' => ['nullable', 'string', 'max:500'],
+            'remarks' => ['required', 'string', 'max:500'],
         ]);
 
         $registrar = Auth::user()->registrar;
 
         $enrollment->update([
-            'status'      => 'rejected',
+            'status'      => 'invalid',
             'approved_by' => $registrar?->id,
             'reviewed_at' => now(),
-            'remarks'     => $validated['remarks'] ?? 'Enrollment rejected.',
+            'remarks'     => $validated['remarks'],
         ]);
 
-        AuditLog::record('rejected_enrollment', 'Enrollment', $enrollment->id,
-            'Rejected enrollment #'.$enrollment->id);
+        AuditLog::record('invalidated_enrollment', 'Enrollment', $enrollment->id,
+            'Returned enrollment #'.$enrollment->id.' as invalid');
 
-        return back()->with('success', 'Enrollment rejected.');
+        return back()->with('success', 'Enrollment returned to the student for compliance.');
     }
 
-    // Revert a rejected enrollment back to pending. Requires a valid reason
+    // Reopen an invalid enrollment back to pending. Requires a valid reason
     // (e.g. "student submitted Form 138"). Reopens the application for review.
     public function revertEnrollment(Request $request, $enrollment)
     {
         $enrollment = Enrollment::findOrFail($enrollment);
 
-        if ($enrollment->status !== 'rejected') {
-            return back()->with('error', 'Only rejected enrollments can be reverted.');
+        if ($enrollment->status !== 'invalid') {
+            return back()->with('error', 'Only invalid enrollments can be reopened.');
         }
 
         $validated = $request->validate([
