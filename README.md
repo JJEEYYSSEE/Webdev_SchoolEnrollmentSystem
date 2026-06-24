@@ -33,37 +33,54 @@ A web-based Senior High School (Grade 11–12, strand-based) enrollment system b
 
 ## Overview
 
-Two roles share one system:
+Branded for **Cabrivex International Senior High School (CISHS)** — *powered by E-Tala Enrollment System*.
 
-- **Students** register, pick a section for the active semester (subjects are fixed per
-  section and auto-loaded), and track their enrollment status, subjects, and records.
-- **Registrars** open/close the enrollment period per semester, manage sections and
-  subjects, review enrollments (approve / reject / batch approve), encode grades, and
-  finalize semesters.
+Admission and enrollment are two separate phases:
 
-### User Flow
+- **Applicants → Students** register, verify their email, then complete a DepEd-style Grade 11
+  application (personal info, education background, document uploads). Once the registrar
+  **qualifies** them they receive a **School ID + default password** and become bona fide
+  students who enroll per semester and track their status, section, schedule, subjects, and records.
+- **Registrars** review applications (qualify / waitlist / return), manage school years,
+  sections and subjects, review enrollments, auto-generate class schedules, encode grades
+  (100-point), and finalize semesters.
+
+### Admission → Enrollment flow
 
 ```
 Landing (/) → choose role
-  Student → register (strand + grade) → dashboard
-          → enroll (pick a section for the active semester)
-          → enrollment created (pending) + subjects snapshotted
-          → view status / section / subjects / records
-  Registrar → log in
-          → create + activate a school year, set active semester, open enrollment
-          → review enrollment queue → approve / reject (with feedback) / batch approve
-          → encode grades → finalize semester (locks records + GPA)
+
+Applicant (new)
+  register (name, birthday, email, password) → verify email
+  → application wizard: Personal → Education → Documents → Review → submit (pending)
+  → registrar reviews:
+       Qualified  → School ID + default password emailed
+       Waitlisted → no remaining slot for that strand
+       Invalid    → returned for compliance (fix + resubmit)
+  → log in with School ID → forced password change → dashboard
+
+Student (admitted)
+  enroll for the active semester (Grade 12 uploads SF9 + 2x2 photo)
+  → enrollment pending → registrar approves → assigned section + auto-generated schedule
+  → view status / section / schedule / subjects / records
+
+Registrar
+  log in with Staff ID → review applications → manage semesters / sections / subjects
+  → review enrollments (approve / return as invalid) → generate schedules
+  → encode grades (60–100) → finalize semester (locks records)
 ```
 
 Key rules:
-- **Active semester gate** — enrollment only works when a school year is active, the
-  active semester is set (1st / 2nd), and the registrar has opened enrollment.
-- **No manual subject picking** — choosing a section enrolls the student in all of that
-  section's subjects (snapshot copied to `enrollment_subjects`).
-- **Section capacity** — a section that is full hard-blocks further approvals.
-- **Rejection freezes the application** for that semester. The student must comply with the
-  registrar's feedback; only the registrar can reopen it (revert to pending, with a reason),
-  or the student applies again next semester.
+- **Login by School ID** — admitted students use their School ID, registrars their Staff ID
+  (email also works). Applicants (no School ID yet) sign in with email to track or fix their
+  application; the admission gate keeps them out of the dashboard until qualified.
+- **Capacity + waitlist** — qualifying needs a free slot in the strand's sections; if full,
+  the applicant is waitlisted instead of admitted.
+- **Invalid = return-for-compliance** — a returned application/enrollment is *not* frozen; the
+  student fixes the issue and re-submits (shown in orange).
+- **No manual subject picking** — choosing a section enrolls the student in all its subjects
+  (snapshot copied to `enrollment_subjects`).
+- **Grades are 100-point** — 60 lowest, 75 passing, 90+ high.
 
 ---
 
@@ -112,23 +129,29 @@ App runs at: `http://localhost:8000`
 
 ## Sample Accounts
 
-All seeded accounts use the password **`password`** and are pre-verified.
+All seeded accounts use the password **`password`**. **Log in with the School ID / Staff ID**
+(email also works).
 
-| Role | Email | Notes |
+| Role | Login ID | Notes |
 |---|---|---|
-| Registrar | `registrar1@school.edu.ph` | Liza Fernandez |
-| Registrar | `registrar2@school.edu.ph` | Mark Villanueva |
-| Student | `juan.delacruz@student.edu.ph` | STEM 11 — approved |
-| Student | `maria.santos@student.edu.ph` | STEM 11 — pending |
-| Student | `pedro.reyes@student.edu.ph` | ABM 11 — approved |
-| Student | `ana.garcia@student.edu.ph` | STEM 11 — rejected |
-| Student | `jose.ramos@student.edu.ph` | ABM 11 — pending |
+| Registrar | `REG-0001` | Liza Fernandez |
+| Registrar | `REG-0002` | Mark Villanueva |
+| Grade 12 student | `2025-00001` … `2025-00132` | admitted, varied strands + section fills, with grades + past records |
+| Grade 12 — enroll test | `2025-12900` (STEM), `2025-12901` (ABM) | **not yet enrolled** — use to test the Grade 12 enrollment form (SF9 + 2x2 photo) |
+| Grade 11 student | `2026-00001` … `2026-00005` | e.g. `2026-00004` was returned (invalid) — good for the resubmit flow |
+| Grade 11 — enroll test | `2026-11900` | **not yet enrolled** — Grade 11 enrollment form (no documents) |
+
+> **To test the registration / admission flow, create your own account** at `/register`
+> (register → verify email → fill the application wizard). The seeded students above are
+> already admitted, so they can't go through registration again.
+
+> School IDs use the admission-year prefix: Grade 12 (admitted last year) = `2025-`,
+> incoming Grade 11 = `2026-`.
 
 Active semester after seeding: **S.Y. 2026-2027 · 1st Semester**, enrollment open.
 
-> New students who self-register land straight on the dashboard (email verification is
-> disabled). To re-enable it, have `User` implement `MustVerifyEmail` and add the
-> `verified` middleware to the student routes.
+> **Emails** need SMTP + network access. For local dev, set `MAIL_MAILER=log` in `.env` and
+> read the verification link / School ID / OTP from `storage/logs/laravel.log`.
 
 ---
 
@@ -136,17 +159,20 @@ Active semester after seeding: **S.Y. 2026-2027 · 1st Semester**, enrollment op
 
 | Table | Description |
 |---|---|
-| `users` | Auth accounts — role: student / registrar |
-| `students` | Student profile (strand + grade) linked to a user |
+| `users` | Auth accounts — role, School/Staff ID, must-change-password flag |
+| `students` | Student profile (strand + grade), created at admission |
 | `registrars` | Registrar profile linked to a user |
-| `school_years` | School years — one active, with an active semester (1st/2nd) and enrollment open/closed |
+| `applications` | Grade 11 admission application (DepEd fields) — draft / pending / invalid / qualified / waitlisted |
+| `application_documents` | Uploaded admission docs (SF10, SF9, good moral, PSA, 2x2) |
+| `school_years` | School years — one active, with active semester (1st/2nd) and enrollment open/closed |
 | `strands` | SHS strands — STEM, ABM, HUMSS, GAS, TVL |
 | `subjects` | Master subject list |
 | `sections` | Class section per strand / grade / semester / school year |
-| `section_subjects` | Fixed subjects assigned to each section |
-| `enrollments` | Student enrollment per section — pending / approved / rejected |
+| `section_subjects` | Fixed subjects per section + the generated weekly schedule slot (day/time/room) |
+| `enrollments` | Student enrollment per section — pending / approved / invalid (returned) |
 | `enrollment_subjects` | Snapshot of subjects per enrollment, with grade and status |
-| `semester_records` | GPA per student per semester, locked on finalization |
+| `enrollment_documents` | Grade 12 enrollment requirements (SF9, 2x2 photo) |
+| `semester_records` | 100-point average per student per semester, locked on finalization |
 | `audit_logs` | Trail of registrar actions |
 
 ---
@@ -156,42 +182,54 @@ Active semester after seeding: **S.Y. 2026-2027 · 1st Semester**, enrollment op
 ```
 app/
   Http/Controllers/
-    Auth/           — Breeze auth + registration
-    Student/        — Dashboard, Enrollment, Subject, Record, Section
-    Registrar/      — Dashboard, Enrollment, Student, Section, Subject,
+    Auth/           — login (School ID/email), registration, OTP + first-password
+    Student/        — Application (wizard), Dashboard, Enrollment, Subject, Record, Section
+    Registrar/      — Dashboard, Application, Enrollment, Student, Section, Subject,
                       Semester, Grade, SemesterRecord
   Http/Middleware/
-    CheckRole.php   — role-based access control
+    CheckRole.php          — role-based access
+    EnsureAdmitted.php     — keep un-admitted students in the application flow
+    EnsurePasswordChanged.php — force first-login password change
+  Services/
+    ScheduleGenerator.php  — weekly timetable from DepEd class hours
+  Notifications/    — qualified / waitlisted / returned / password OTP emails
   Models/           — Eloquent models with relationships
 
 resources/views/
   landing.blade.php — role selection
-  auth/             — login, register, password reset
-  layouts/          — app, guest, student, registrar base layouts
+  auth/             — login, register, first-password, verify
+  application/      — admission wizard + status (applicants)
+  emails/           — branded email bodies
+  vendor/mail/      — CISHS Markdown mail theme
+  layouts/          — app, guest, applicant, student, registrar base layouts
   student/          — student portal pages
-  registrar/        — registrar portal pages (incl. semester, grades)
+  registrar/        — registrar portal pages (incl. applications, semester, grades, schedule)
 
 database/
   migrations/       — domain tables + Laravel defaults
-  seeders/          — SchoolYear, Strand, Subject, User, Section,
-                      SectionSubject, Enrollment
+  seeders/          — SchoolYear, Strand, Subject, User, Section, SectionSubject,
+                      Enrollment, Grade12Scenario, Grade
 
 routes/
-  web.php           — student + registrar route groups
-  auth.php          — Breeze auth routes
+  web.php           — application + student + registrar route groups
+  auth.php          — auth routes (login, OTP, verification)
 ```
 
 ---
 
 ## Routes
 
+Login accepts a **School ID / Staff ID or email**.
+
 | Prefix | Middleware | Description |
 |---|---|---|
 | `/` | — | Landing / role selection |
-| `/login`, `/register` | guest | Auth + student registration |
-| `/student/*` | auth, role:student | Student portal |
-| `/registrar/*` | auth, role:registrar | Registrar portal |
-| `/profile` | auth | Profile edit |
+| `/login`, `/register` | guest | Login (School ID/email) + applicant registration |
+| `/application*` | auth, verified, role:student | Admission wizard + status (applicants) |
+| `/student/*` | auth, verified, admitted, role:student | Student portal (admitted only) |
+| `/registrar/*` | auth, verified, role:registrar | Registrar portal (incl. applications, schedules) |
+| `/first-password` | auth | Forced password change after first login |
+| `/profile` | auth | Profile edit + password change (OTP) |
 
 ---
 
