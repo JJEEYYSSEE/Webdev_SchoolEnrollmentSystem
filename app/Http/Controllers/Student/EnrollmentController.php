@@ -53,11 +53,16 @@ class EnrollmentController extends Controller
             ->first();
 
         $sections = Section::with('subjects')
+            ->withCount(['enrollments as approved_count' => fn ($q) => $q->where('status', 'approved')])
             ->where('school_year_id', $schoolYear->id)
             ->where('semester', $schoolYear->active_semester)
             ->where('strand_id', $student->strand_id)
             ->where('grade_level', $student->grade_level)
-            ->get();
+            ->get()
+            // Hide sections already at capacity — a full section never reaches
+            // the student, so the registrar can't hit a "section full" wall.
+            ->reject(fn ($section) => $section->isFull())
+            ->values();
 
         return view('student.enroll', [
             'student'        => $student,
@@ -107,6 +112,12 @@ class EnrollmentController extends Controller
         ) {
             return redirect()->route('student.showEnrollForm')
                 ->with('error', 'That section is not available for your strand and grade level.');
+        }
+
+        // Race guard: the section may have filled between page load and submit.
+        if ($section->isFull()) {
+            return redirect()->route('student.showEnrollForm')
+                ->with('error', 'Sorry, "'.$section->section_name.'" just filled up. Please pick another section.');
         }
 
         DB::transaction(function () use ($student, $section, $request) {
@@ -162,6 +173,28 @@ class EnrollmentController extends Controller
             ->first();
 
         return view('student.status', compact('student', 'schoolYear', 'enrollment'));
+    }
+
+    // Certificate of Registration — printable page. Only available once the
+    // enrollment for the active school year is approved (officially enrolled).
+    public function showCertificate(Request $request)
+    {
+        $student    = Auth::user()->student;
+        $schoolYear = SchoolYear::active();
+
+        $enrollment = $student->enrollments()
+            ->with(['section.strand', 'section.schoolYear', 'section.subjects', 'subjects', 'approver'])
+            ->where('status', 'approved')
+            ->when($schoolYear, fn ($q) => $q->whereHas('section', fn ($s) => $s->where('school_year_id', $schoolYear->id)))
+            ->latest('submitted_at')
+            ->first();
+
+        if (! $enrollment) {
+            return redirect()->route('student.showEnrollStatus')
+                ->with('error', 'A Certificate of Registration is only available once your enrollment is approved.');
+        }
+
+        return view('student.cor', compact('student', 'schoolYear', 'enrollment'));
     }
 
     /**

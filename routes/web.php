@@ -57,6 +57,7 @@ Route::group(['prefix' => 'student', 'as' => 'student.', 'middleware' => ['auth'
     Route::get('/enroll', [StudentEnrollment::class, 'showEnrollForm'])->name('showEnrollForm');
     Route::post('/enroll', [StudentEnrollment::class, 'postEnrollForm'])->name('postEnrollForm');
     Route::get('/enrollment/status', [StudentEnrollment::class, 'showEnrollStatus'])->name('showEnrollStatus');
+    Route::get('/enrollment/certificate', [StudentEnrollment::class, 'showCertificate'])->name('showCertificate');
 
     Route::get('/section', [StudentSection::class, 'showSection'])->name('showSection');
     Route::get('/schedule', [StudentSection::class, 'showSchedule'])->name('showSchedule');

@@ -92,6 +92,23 @@
             </div>
         </div>
 
+        {{-- Officially enrolled — Certificate of Registration --}}
+        @if ($enrollment->status === 'approved')
+            <div class="card border-0 border-start border-4 border-success shadow-sm mb-4 bg-white">
+                <div class="card-body p-4 text-center">
+                    <i class="bi bi-patch-check-fill text-success fs-1"></i>
+                    <h4 class="fw-bold text-dark mt-2 mb-1">You are officially enrolled.</h4>
+                    <p class="text-muted small mb-3">
+                        (S.Y. {{ $enrollment->section->schoolYear->year_label ?? '' }} &middot; {{ $enrollment->section->semester }} Semester)
+                    </p>
+                    <a href="{{ route('student.showCertificate') }}" target="_blank"
+                       class="btn btn-success px-4 d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-file-earmark-text"></i> Certificate of Registration
+                    </a>
+                </div>
+            </div>
+        @endif
+
         {{-- Stats Grid --}}
         <div class="row g-3 mb-4">
             <div class="col-md-4">

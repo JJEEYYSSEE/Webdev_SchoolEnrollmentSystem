@@ -118,13 +118,22 @@
                                                value="{{ $section->id }}" id="section{{ $section->id }}"
                                                {{ old('section_id') == $section->id ? 'checked' : '' }} required>
                                         <div class="form-check-label flex-grow-1">
-                                            <div class="fw-bold text-dark fs-5">{{ $section->section_name }}</div>
+                                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                                <span class="fw-bold text-dark fs-5">{{ $section->section_name }}</span>
+                                                @if ($section->isNearlyFull())
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                                        <i class="bi bi-exclamation-circle"></i> Almost full
+                                                    </span>
+                                                @endif
+                                            </div>
                                             <span class="badge bg-light text-secondary border mt-1">{{ $section->time_period }} Schedule</span>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="text-muted small mb-3">
-                                        Slots: <strong>{{ $section->max_capacity }} max</strong> &middot;
+                                        Slots:
+                                        <strong class="{{ $section->isNearlyFull() ? 'text-danger' : 'text-success' }}">{{ $section->remainingSlots() }} left</strong>
+                                        of {{ $section->max_capacity }} &middot;
                                         Subjects: <strong>{{ $section->subjects->count() }} total</strong>
                                     </div>
                                     
