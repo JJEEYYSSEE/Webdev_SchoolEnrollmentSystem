@@ -8,30 +8,20 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * Registration only creates the login (an applicant). The full DepEd
-     * application form — and the student profile / School ID — come later,
-     * after the email is verified and the registrar approves the application.
-     *
-     * @throws ValidationException
-     */
+    // Registration only makes the applicant login. The full form, student
+    // profile and School ID come later, after email verification + admission.
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
@@ -42,26 +32,30 @@ class RegisteredUserController extends Controller
             'password'   => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'name'      => $validated['first_name'].' '.$validated['last_name'],
-            'email'     => $validated['email'],
-            'birthdate' => $validated['birthdate'],
-            'password'  => Hash::make($validated['password']),
-            'role'      => 'student',
-        ]);
-
-        // Send the verification email, but don't let an SMTP/network failure
-        // crash registration — the user can resend it from the verify page.
+        // Create the account and send the verification email atomically — if the
+        // email can't be sent, roll back so no orphan account is left behind.
         try {
-            event(new Registered($user));
+            $user = DB::transaction(function () use ($validated) {
+                $user = User::create([
+                    'name'      => $validated['first_name'].' '.$validated['last_name'],
+                    'email'     => $validated['email'],
+                    'birthdate' => $validated['birthdate'],
+                    'password'  => Hash::make($validated['password']),
+                    'role'      => 'student',
+                ]);
+
+                event(new Registered($user)); // sends verification mail; throws → rolls back
+
+                return $user;
+            });
         } catch (\Throwable $e) {
             report($e);
+
+            return back()->withInput($request->except('password', 'password_confirmation'))
+                ->withErrors(['email' => 'We could not complete your registration right now (email service unavailable). Please try again.']);
         }
 
         Auth::login($user);
-
-        // Not yet verified — the verified middleware sends them to verify their
-        // email before they can reach the application form.
         return redirect()->route('verification.notice');
     }
 }

@@ -14,12 +14,7 @@ use Illuminate\View\View;
 
 class PasswordController extends Controller
 {
-    /**
-     * Validate the requested password change and email a 6-digit OTP.
-     *
-     * The new password is NOT applied here — it is held (hashed) in
-     * password_change_otps until the user confirms the emailed code.
-     */
+    // validate the change and email a 6-digit code; the new password waits until confirmed
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validateWithBag('updatePassword', [
@@ -45,9 +40,7 @@ class PasswordController extends Controller
         return redirect()->route('password.otp')->with('status', 'password-otp-sent');
     }
 
-    /**
-     * Show the OTP entry page for a pending password change.
-     */
+    // OTP entry page (only while a code is pending)
     public function showOtp(Request $request): RedirectResponse|View
     {
         $otp = PasswordChangeOtp::where('user_id', $request->user()->id)->first();
@@ -59,9 +52,7 @@ class PasswordController extends Controller
         return view('profile.confirm-password-otp');
     }
 
-    /**
-     * Verify the emailed code and apply the pending password change.
-     */
+    // check the code and apply the held password
     public function confirmOtp(Request $request): RedirectResponse
     {
         $request->validate([
@@ -92,9 +83,7 @@ class PasswordController extends Controller
         return redirect()->route('profile.edit')->with('status', 'password-updated');
     }
 
-    /**
-     * Re-send a fresh code for the current pending password change.
-     */
+    // send a fresh code for the pending change
     public function resendOtp(Request $request): RedirectResponse
     {
         $otp = PasswordChangeOtp::where('user_id', $request->user()->id)->first();
