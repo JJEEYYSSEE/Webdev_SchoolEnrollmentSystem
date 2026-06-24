@@ -58,6 +58,7 @@
         @yield('content')
     </main>
 
+    @include('partials.confirm-modal')
     @include('partials.submit-loading')
 </body>
 </html>

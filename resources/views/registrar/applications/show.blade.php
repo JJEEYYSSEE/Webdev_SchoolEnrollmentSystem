@@ -99,7 +99,9 @@
                         </div>
 
                         <form method="POST" action="{{ route('registrar.qualifyApplication', $a) }}" class="mb-3"
-                              onsubmit="return confirm('{{ $hasSlot ? 'Qualify this applicant and issue a School ID?' : 'No slots left — this will WAITLIST the applicant. Continue?' }}');">
+                              data-confirm="{{ $hasSlot ? 'Qualify this applicant and issue a School ID?' : 'No slots left — this will WAITLIST the applicant. Continue?' }}"
+                              data-confirm-title="{{ $hasSlot ? 'Qualify Applicant' : 'Waitlist Applicant' }}"
+                              data-confirm-ok="{{ $hasSlot ? 'Qualify' : 'Waitlist' }}">
                             @csrf
                             @if ($hasSlot)
                                 <button type="submit" class="btn btn-success w-100" data-loading-text="Qualifying…">

@@ -10,13 +10,13 @@
 // Bootstrap Icons
 @import 'bootstrap-icons/font/bootstrap-icons.css';
 
-// ─── Custom Styles ─────────────────────────────────────────────────────────────
+// Custom Styles
 
 // Smooth transitions globally
 * { transition: border-color .15s ease, box-shadow .15s ease; }
 a, .btn { transition: all .18s ease !important; }
 
-// ── Auth / Guest Layout ───────────────────────────────────────────────────────
+// Auth / Guest Layout
 .auth-brand-icon {
     width: 52px;
     height: 52px;
@@ -50,7 +50,6 @@ a, .btn { transition: all .18s ease !important; }
     overflow: hidden;
 }
 
-// Register card can be wider
 .auth-card--wide {
     max-width: 640px;
 }
@@ -65,7 +64,7 @@ a, .btn { transition: all .18s ease !important; }
     padding: 2rem;
 }
 
-// ── Navbar ─────────────────────────────────────────────────────────────────────
+// Navbar
 .navbar {
     box-shadow: 0 1px 8px rgba(0,0,0,.12);
     padding-top: .6rem;
@@ -79,7 +78,7 @@ a, .btn { transition: all .18s ease !important; }
     letter-spacing: -.3px;
 }
 
-// ── Sidebar ────────────────────────────────────────────────────────────────────
+// Sidebar
 .sidebar {
     width: 230px;
     flex-shrink: 0;
@@ -110,7 +109,7 @@ a, .btn { transition: all .18s ease !important; }
     }
 }
 
-// ── Password hint ──────────────────────────────────────────────────────────────
+// Password hint
 .password-hint {
     font-size: .775rem;
     color: #7b8794;
@@ -123,7 +122,7 @@ a, .btn { transition: all .18s ease !important; }
     i { margin-top: .05rem; flex-shrink: 0; }
 }
 
-// ── Show/hide password toggle ──────────────────────────────────────────────────
+// Show/hide password toggle
 .input-password-group {
     position: relative;
 
@@ -148,7 +147,7 @@ a, .btn { transition: all .18s ease !important; }
     }
 }
 
-// ── Cards ──────────────────────────────────────────────────────────────────────
+// Cards
 .card {
     border: 1px solid rgba(0,0,0,.07);
     box-shadow: 0 2px 8px rgba(0,0,0,.05);
@@ -162,7 +161,6 @@ a, .btn { transition: all .18s ease !important; }
     }
 }
 
-/* Selected card state for radio-style cards (enrollment form) */
 .card.selected {
     border-color: var(--portal-primary);
     box-shadow: 0 8px 24px rgba(30,58,95,0.08) !important;
@@ -173,7 +171,7 @@ details summary { list-style: none; }
 details summary::-webkit-details-marker { display: none; }
 details[open] summary { color: var(--portal-primary); }
 
-// ── Tables ─────────────────────────────────────────────────────────────────────
+// Tables 
 .table th {
     font-size: .78rem;
     font-weight: 700;
@@ -182,7 +180,7 @@ details[open] summary { color: var(--portal-primary); }
     color: #7b8794;
 }
 
-// ── Stat card ──────────────────────────────────────────────────────────────────
+// Stat card
 .stat-card {
     border-left: 4px solid;
     border-radius: .75rem;
@@ -193,7 +191,7 @@ details[open] summary { color: var(--portal-primary); }
     &.stat-primary  { border-left-color: $primary; }
 }
 
-// ── Portal Theme and Dark Mode Styling ─────────────────────────────────────────
+// Dark mode styling
 
 body {
     background-color: var(--portal-surface) !important;
@@ -201,7 +199,7 @@ body {
     transition: background-color 0.2s, color 0.2s;
 }
 
-/* Registrar styles */
+// Registrar styles
 body.portal-registrar {
     --portal-primary:  #1e3a5f;
     --portal-accent:   #3a6ea5;
@@ -398,7 +396,7 @@ body.portal-student {
     }
 }
 
-// ── Buttons ────────────────────────────────────────────────────────────────────
+// Buttons
 .btn {
     display: flex;
     align-items: center;
@@ -409,7 +407,7 @@ body.portal-student {
     transition: all 0.2s ease !important;
 }
 
-// ── Landing page (legacy class kept for compatibility) ──────────────────────
+// Landing page
 .landing-hero-cls {
     background: linear-gradient(160deg, #1a1f2e 0%, #1c2630 40%, #0f1f1c 100%);
     padding: 4rem 1rem 3rem;
@@ -429,7 +427,7 @@ body.portal-student {
     }
 }
 
-// ── Password-change OTP boxes ────────────────────────────────────────────────────
+// Password-change OTP boxes
 .otp-group {
     display: flex;
     justify-content: center;
@@ -449,7 +447,7 @@ body.portal-student {
     }
 }
 
-// ── Portal footer ─────────────────────────────────────────────────────────────
+// Portal footer
 .portal-footer {
     background-color: var(--portal-surface);
     border-top: 1px solid var(--portal-border, rgba(0,0,0,.08));
@@ -466,7 +464,7 @@ body.portal-student {
     }
 }
 
-// ── Landing page — full redesign ───────────────────────────────────────────────
+// Landing page (updated version)
 
 // Animated background orbs
 .landing-orbs {
@@ -722,6 +720,113 @@ body.portal-student {
         width: 42px;
         height: 50px;
         font-size: 1.25rem;
+    }
+}
+
+// Confirm dialog themes
+.app-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 1080;
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    &.is-open { display: flex; }
+
+    &__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(17, 24, 39, .55);
+        backdrop-filter: blur(2px);
+    }
+
+    &__dialog {
+        position: relative;
+        width: 100%;
+        max-width: 420px;
+        margin: 1rem;
+        background: #fff;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, .3);
+        animation: appConfirmIn .15s ease;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+        padding: 1rem 1.25rem;
+        color: #fff;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--portal-primary, #1e3a5f), var(--portal-accent, #3a6ea5));
+
+        i { font-size: 1.25rem; }
+    }
+
+    &__body {
+        padding: 1.25rem;
+        color: #374151;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: .5rem;
+        padding: 0 1.25rem 1.25rem;
+    }
+
+    &__ok {
+        color: #fff;
+        border: none;
+        background: linear-gradient(135deg, var(--portal-primary, #1e3a5f), var(--portal-accent, #3a6ea5));
+
+        &:hover, &:focus { color: #fff; filter: brightness(1.06); }
+        &.is-danger { background: linear-gradient(135deg, #b02a37, #dc3545); }
+    }
+}
+
+@keyframes appConfirmIn {
+    from { opacity: 0; transform: translateY(8px) scale(.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+// Pagination
+.app-pagination {
+    margin-top: .5rem;
+
+    .pagination {
+        gap: .3rem;
+        margin-bottom: 0;
+    }
+
+    .page-link {
+        border: 1px solid var(--portal-border, #dee2e6);
+        border-radius: .5rem;
+        min-width: 2.4rem;
+        padding: .4rem .65rem;
+        text-align: center;
+        color: var(--portal-primary, #0d6efd);
+        transition: all .15s ease;
+
+        &:hover {
+            background: var(--portal-primary, #0d6efd);
+            border-color: var(--portal-primary, #0d6efd);
+            color: #fff;
+        }
+    }
+
+    .page-item.active .page-link {
+        background: linear-gradient(135deg, var(--portal-primary, #0d6efd), var(--portal-accent, #3a6ea5));
+        border-color: var(--portal-primary, #0d6efd);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, .15);
+    }
+
+    .page-item.disabled .page-link {
+        color: #adb5bd;
+        background: transparent;
     }
 }
 
