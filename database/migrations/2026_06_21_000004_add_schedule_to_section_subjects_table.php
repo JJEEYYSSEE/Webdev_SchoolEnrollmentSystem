@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Per-subject weekly schedule slot for a section. Populated by the schedule
-     * generator from DepEd class hours + the section's AM/PM time period.
-     */
+    // Per-subject weekly slot for a section, filled by the schedule generator.
     public function up(): void
     {
         Schema::table('section_subjects', function (Blueprint $table) {

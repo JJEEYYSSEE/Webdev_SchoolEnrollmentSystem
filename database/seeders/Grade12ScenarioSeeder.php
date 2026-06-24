@@ -10,11 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class Grade12ScenarioSeeder extends Seeder
 {
-    /**
-     * Populate Grade 12 students across all strands with varied section fill
-     * levels (full / partial), then generate a weekly schedule for every
-     * section so student "My Schedule" pages have data to show.
-     */
+    // Grade 12 students across all strands with varied section fills, then a schedule for every section.
     public function run(): void
     {
         $sy = DB::table('school_years')->where('is_active', true)->value('id')

@@ -9,14 +9,7 @@ class ScheduleGenerator
 {
     private const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
-    /**
-     * Auto-generate a weekly timetable for a section's subjects.
-     *
-     * Uses DepEd-style class hours within the section's AM/PM window, 60-minute
-     * slots, one homeroom per cohort. Subjects are spread across the week
-     * (round-robin by day) so no two land on the same day/time within the
-     * section. Returns the number of subjects scheduled.
-     */
+    // Spread a section's subjects across the week in 60-min slots. Returns how many got scheduled.
     public function generate(Section $section): int
     {
         $subjects = $section->subjects()->orderBy('subjects.subject_code')->get();
@@ -28,7 +21,7 @@ class ScheduleGenerator
         $slots = $this->slotsFor($section->time_period);
         $room  = 'Room '.$section->id;
 
-        // Round-robin by day first so subjects spread evenly across Mon–Fri.
+        // day-first order so subjects spread across Mon–Fri, not stacked on one day
         $assignments = [];
         foreach ($slots as $slot) {
             foreach (self::DAYS as $day) {
@@ -40,7 +33,7 @@ class ScheduleGenerator
 
         foreach ($subjects->values() as $i => $subject) {
             if (! isset($assignments[$i])) {
-                break; // more subjects than available weekly slots
+                break; // ran out of slots
             }
 
             $a = $assignments[$i];
@@ -57,11 +50,7 @@ class ScheduleGenerator
         return $count;
     }
 
-    /**
-     * 60-minute slots within the AM or PM window (skips the 12:00–1:00 lunch).
-     *
-     * @return array<int, array{0:string,1:string}>  list of [start, end] (H:i:s)
-     */
+    // 60-min slots in the AM or PM window (lunch 12–1 skipped). Returns [start, end] pairs.
     private function slotsFor(string $timePeriod): array
     {
         $starts = $timePeriod === 'PM'

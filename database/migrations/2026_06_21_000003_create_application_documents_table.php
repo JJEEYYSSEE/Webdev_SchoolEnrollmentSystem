@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Uploaded admission documents (SF10, SF9, good moral, PSA, 2x2, etc.).
-     * Files are stored on the local disk; only the path is persisted.
-     */
+    // Uploaded admission documents (SF10, SF9, good moral, PSA, 2x2) — local disk, path only.
     public function up(): void
     {
         Schema::create('application_documents', function (Blueprint $table) {

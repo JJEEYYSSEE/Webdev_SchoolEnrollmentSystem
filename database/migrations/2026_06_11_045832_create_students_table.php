@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('phone', 20)->nullable();
             $table->date('birthdate')->nullable();
             $table->text('address')->nullable();
-            // Strand + grade chosen at registration — drives which sections/subjects load on enrollment
             $table->foreignId('strand_id')->nullable()->constrained()->onDelete('set null');
             $table->enum('grade_level', ['11', '12'])->nullable();
             $table->timestamps();

@@ -106,7 +106,7 @@ class SectionController extends Controller
             ->with('success', 'Section deleted.');
     }
 
-    /** Show a section's generated weekly timetable. */
+    // a section's weekly timetable
     public function showSchedule(Request $request, $section)
     {
         $section = Section::with(['strand', 'schoolYear', 'subjects'])->findOrFail($section);
@@ -114,7 +114,7 @@ class SectionController extends Controller
         return view('registrar.sections.schedule', compact('section'));
     }
 
-    /** Auto-generate (or regenerate) the section's weekly schedule. */
+    // (re)generate the section's weekly schedule
     public function generateSchedule(Request $request, $section, ScheduleGenerator $generator)
     {
         $section = Section::with('subjects')->findOrFail($section);

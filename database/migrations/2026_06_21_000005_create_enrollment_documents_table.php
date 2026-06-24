@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Per-term enrollment requirements (Grade 12): SF9 report card, 2x2 photo.
-     * Files live on the local disk; only the path is stored.
-     */
+    // Grade 12 per-term enrollment requirements (SF9, 2x2 photo) — local disk, path only.
     public function up(): void
     {
         Schema::create('enrollment_documents', function (Blueprint $table) {

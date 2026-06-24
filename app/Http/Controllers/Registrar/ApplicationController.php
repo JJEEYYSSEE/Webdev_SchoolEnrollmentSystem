@@ -17,7 +17,7 @@ use Illuminate\View\View;
 
 class ApplicationController extends Controller
 {
-    /** List submitted applications (pending / invalid / qualified / waitlisted). */
+    // submitted applications, filterable by status
     public function showApplications(Request $request): View
     {
         $status = $request->query('status');
@@ -41,7 +41,7 @@ class ApplicationController extends Controller
         ]);
     }
 
-    /** Review one application — details, documents, and slot availability. */
+    // review screen — details, documents, and slot availability
     public function showApplication(Application $application): View
     {
         $application->load(['user', 'strand', 'documents', 'reviewer']);
@@ -57,7 +57,7 @@ class ApplicationController extends Controller
         ]);
     }
 
-    /** Return for compliance — mark invalid with a reason (applicant reuploads). */
+    // return the application as invalid with a reason — applicant reuploads + resubmits
     public function returnApplication(Request $request, Application $application): RedirectResponse
     {
         $validated = $request->validate([
@@ -82,11 +82,7 @@ class ApplicationController extends Controller
             ->with('status', 'application-returned');
     }
 
-    /**
-     * Qualify an application: issue a School ID + default password, create the
-     * student profile, and admit the applicant. If the strand+grade has no
-     * remaining section capacity, waitlist them instead.
-     */
+    // qualify: issue School ID + default password and create the student — or waitlist if full
     public function qualifyApplication(Request $request, Application $application): RedirectResponse
     {
         if (! $application->isPending()) {
@@ -95,7 +91,7 @@ class ApplicationController extends Controller
 
         $registrarId = $request->user()->registrar?->id;
 
-        // No remaining slot for this strand + grade → waitlist.
+        // no slot left for this strand + grade → waitlist instead
         if (! ($this->seatsFor($application) > 0 && $this->admittedFor($application) < $this->seatsFor($application))) {
             $application->update([
                 'status'      => 'waitlisted',
@@ -153,9 +149,7 @@ class ApplicationController extends Controller
             ->with('status', 'application-qualified');
     }
 
-    // ── Capacity helpers ─────────────────────────────────────────────────────
-
-    /** Total seats across Grade-11 sections of the application's strand. */
+    // total seats across the strand's sections for that grade
     private function seatsFor(Application $application): int
     {
         return (int) Section::where('strand_id', $application->strand_id)
@@ -163,7 +157,7 @@ class ApplicationController extends Controller
             ->sum('max_capacity');
     }
 
-    /** Students already admitted into that strand + grade. */
+    // students already admitted into that strand + grade
     private function admittedFor(Application $application): int
     {
         return Student::where('strand_id', $application->strand_id)

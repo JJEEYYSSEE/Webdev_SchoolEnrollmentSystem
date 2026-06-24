@@ -14,12 +14,10 @@ return new class extends Migration
             $table->foreignId('school_year_id')->constrained()->onDelete('restrict');
             $table->enum('grade_level', ['11', '12']);
             $table->enum('semester', ['1st', '2nd']);
-            $table->string('section_name', 50);       // e.g. 'Kasipagan'
+            $table->string('section_name', 50);      
             $table->enum('time_period', ['AM', 'PM']);
             $table->integer('max_capacity')->default(40);
             $table->timestamps();
-
-            // Same section name can't appear twice for same strand + year + grade + sem
             $table->unique(
                 ['strand_id', 'school_year_id', 'grade_level', 'semester', 'section_name'],
                 'sections_unique'

@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Grade 11 admission application. One per user. Fields follow DepEd's
-     * Basic Education Enrollment Form / Learner Information.
-     */
+    // Grade 11 admission application (one per user) — fields follow DepEd's enrollment form.
     public function up(): void
     {
         Schema::create('applications', function (Blueprint $table) {

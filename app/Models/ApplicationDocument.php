@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ApplicationDocument extends Model
 {
-    /** Required admission document types: key => human label. */
+    // required admission documents (type => label)
     public const TYPES = [
         'sf10'       => 'SF10 / Form 137',
         'sf9'        => 'SF9 / Report Card (Grade 10)',
@@ -23,7 +23,6 @@ class ApplicationDocument extends Model
         'original_name',
     ];
 
-    /** Human-readable label for this document's type. */
     public function label(): string
     {
         return self::TYPES[$this->type] ?? ucwords(str_replace('_', ' ', $this->type));
@@ -34,7 +33,6 @@ class ApplicationDocument extends Model
         return $this->belongsTo(Application::class);
     }
 
-    /** Public URL for previewing/downloading the stored file. */
     public function url(): string
     {
         return Storage::url($this->path);

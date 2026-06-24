@@ -26,7 +26,7 @@ class GradeController extends Controller
 
         $validated = $request->validate([
             'grades'              => ['required', 'array'],
-            'grades.*.grade'      => ['nullable', 'numeric', 'min:1', 'max:5'],
+            'grades.*.grade'      => ['nullable', 'numeric', 'min:60', 'max:100'],
             'grades.*.status'     => ['required', 'in:enrolled,passed,failed,dropped'],
         ]);
 

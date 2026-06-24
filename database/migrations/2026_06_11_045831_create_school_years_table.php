@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('school_years', function (Blueprint $table) {
             $table->id();
-            $table->string('year_label', 20)->unique();   // e.g. '2026-2027'
+            $table->string('year_label', 20)->unique(); 
             $table->boolean('is_active')->default(false);
-            $table->enum('active_semester', ['1st', '2nd'])->default('1st'); // which sem is current
-            $table->boolean('is_enrollment_open')->default(false); // registrar opens/closes enrollment
+            $table->enum('active_semester', ['1st', '2nd'])->default('1st');
+            $table->boolean('is_enrollment_open')->default(false);
             $table->timestamps();
         });
     }

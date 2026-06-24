@@ -35,7 +35,7 @@ class SemesterRecordController extends Controller
         $validated = $request->validate([
             'school_year_id' => ['required', 'exists:school_years,id'],
             'semester'       => ['required', 'in:1st,2nd'],
-            'gpa'            => ['nullable', 'numeric', 'min:1', 'max:5'],
+            'gpa'            => ['nullable', 'numeric', 'min:60', 'max:100'],
             'is_locked'      => ['nullable', 'boolean'],
         ]);
 

@@ -6,10 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Admission fields. A registrant starts as an applicant (no school_id);
-     * the School ID is issued only once the registrar marks them qualified.
-     */
+    // Admission fields: School ID is issued only when the registrar qualifies the applicant.
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {

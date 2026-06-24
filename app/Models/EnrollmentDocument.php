@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Storage;
 
 class EnrollmentDocument extends Model
 {
-    /** Grade 12 enrollment requirements: key => human label. */
+    // Grade 12 enrollment requirements (type => label)
     public const TYPES = [
         'sf9'   => 'Grade 11 Report Card (SF9)',
         'photo' => '2x2 ID Photo',

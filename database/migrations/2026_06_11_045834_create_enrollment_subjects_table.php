@@ -8,14 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // Snapshot of subjects auto-copied from section_subjects at enrollment time.
-        // Historical record stays accurate even if section_subjects changes later.
-        // grade is encoded by registrar after the semester ends.
         Schema::create('enrollment_subjects', function (Blueprint $table) {
             $table->id();
             $table->foreignId('enrollment_id')->constrained()->onDelete('cascade');
             $table->foreignId('subject_id')->constrained()->onDelete('restrict');
-            $table->decimal('grade', 4, 2)->nullable(); // 1.00 - 5.00, null until encoded
+            $table->decimal('grade', 4, 2)->nullable();
             $table->enum('status', ['enrolled', 'passed', 'failed', 'dropped'])->default('enrolled');
             $table->timestamps();
 

@@ -58,7 +58,7 @@
                         <tr>
                             <th class="px-4">Code</th>
                             <th>Subject</th>
-                            <th style="width: 180px;">Grade (1.00–5.00)</th>
+                            <th style="width: 180px;">Grade (60–100)</th>
                             <th style="width: 200px;" class="px-4">Status</th>
                         </tr>
                     </thead>
@@ -73,7 +73,7 @@
                                 <td>
                                     <div class="input-group input-group-sm">
                                         <span class="input-group-text"><i class="bi bi-bookmark-star"></i></span>
-                                        <input type="number" step="0.01" min="1" max="5"
+                                        <input type="number" step="0.01" min="60" max="100"
                                                name="grades[{{ $es->id }}][grade]" value="{{ $es->grade }}"
                                                class="form-control" placeholder="—">
                                     </div>

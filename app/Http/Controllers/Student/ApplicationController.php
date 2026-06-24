@@ -13,10 +13,9 @@ use Illuminate\View\View;
 
 class ApplicationController extends Controller
 {
-    /** Required admission documents: type => human label. */
     private array $documentTypes = ApplicationDocument::TYPES;
 
-    /** Show the wizard (draft/invalid) or bounce to the status page (submitted). */
+    // wizard for a draft/returned app; submitted ones go to the status page
     public function show(Request $request): View|RedirectResponse
     {
         $user = $request->user();
@@ -38,7 +37,7 @@ class ApplicationController extends Controller
         ]);
     }
 
-    /** Save a single wizard step (forward validates, back is lenient). */
+    // save one step — Next validates, Back doesn't
     public function save(Request $request): RedirectResponse
     {
         $user        = $request->user();
@@ -68,7 +67,7 @@ class ApplicationController extends Controller
         return redirect()->route('application.show');
     }
 
-    /** Finalize the application for registrar review. */
+    // lock the application and send it for registrar review
     public function submit(Request $request): RedirectResponse
     {
         $user        = $request->user();
@@ -92,7 +91,7 @@ class ApplicationController extends Controller
         return redirect()->route('application.status');
     }
 
-    /** Status tracker for a submitted (pending/qualified) application. */
+    // status page for a submitted (pending/qualified) application
     public function status(Request $request): View|RedirectResponse
     {
         $user = $request->user();

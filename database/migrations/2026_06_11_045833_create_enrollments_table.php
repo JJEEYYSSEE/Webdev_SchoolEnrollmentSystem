@@ -12,10 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('student_id')->constrained()->onDelete('restrict');
             $table->foreignId('section_id')->constrained()->onDelete('restrict');
-            // semester and school_year are derived from section — no FK needed here
-            // pending | approved | invalid (returned for compliance)
             $table->string('status')->default('pending');
-            $table->text('remarks')->nullable(); // registrar notes e.g. reason for return
+            $table->text('remarks')->nullable();
             $table->foreignId('approved_by')->nullable()->constrained('registrars')->onDelete('set null');
             $table->timestamp('submitted_at')->useCurrent();
             $table->timestamp('reviewed_at')->nullable();

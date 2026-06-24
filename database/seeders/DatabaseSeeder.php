@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             SectionSubjectSeeder::class, // section → subject mapping
             EnrollmentSeeder::class,   // enrollments + enrollment_subjects snapshot
             Grade12ScenarioSeeder::class, // G12 students, varied section fills + schedules
+            GradeSeeder::class,           // encoded grades + G12 past Grade 11 records
         ]);
     }
 }
