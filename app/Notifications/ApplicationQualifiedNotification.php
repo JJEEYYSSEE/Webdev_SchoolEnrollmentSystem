@@ -28,13 +28,13 @@ class ApplicationQualifiedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('You are qualified to enroll — '.config('school.short'))
-            ->greeting('Congratulations!')
-            ->line('Your application to '.config('school.name').' has been approved. You are now a bona fide student.')
-            ->line('Use the credentials below to log in:')
-            ->line('**School ID:** '.$this->schoolId)
-            ->line('**Default Password:** '.$this->defaultPassword)
-            ->action('Log In', route('login'))
-            ->line('For your security, you will be asked to change your password on first login. You can then proceed to enroll for the semester.')
-            ->salutation('— '.config('school.name').' · powered by '.config('school.platform'));
+            ->markdown('emails.qualified', [
+                'schoolId' => $this->schoolId,
+                'password' => $this->defaultPassword,
+                'loginUrl' => route('login'),
+            ])
+            ->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) {
+                $message->embedFromPath(public_path('images/logo.png'), 'logo');
+            });
     }
 }

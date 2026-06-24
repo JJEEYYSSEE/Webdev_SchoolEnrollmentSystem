@@ -26,10 +26,9 @@ class ApplicationWaitlistedNotification extends Notification
     {
         return (new MailMessage)
             ->subject('Your application is waitlisted — '.config('school.short'))
-            ->greeting('Hello!')
-            ->line('Your application to '.config('school.name').' is qualified, but slots for Grade 11 — '.$this->strand.' are currently full.')
-            ->line('You have been placed on the **waitlist**. We will email your School ID and login details the moment a slot opens.')
-            ->line('No action is needed from you for now — thank you for your patience.')
-            ->salutation('— '.config('school.name').' · powered by '.config('school.platform'));
+            ->markdown('emails.waitlisted', ['strand' => $this->strand])
+            ->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) {
+                $message->embedFromPath(public_path('images/logo.png'), 'logo');
+            });
     }
 }

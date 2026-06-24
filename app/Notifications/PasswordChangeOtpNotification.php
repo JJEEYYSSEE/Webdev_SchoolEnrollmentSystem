@@ -25,12 +25,10 @@ class PasswordChangeOtpNotification extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Your password change verification code')
-            ->greeting('Hello!')
-            ->line('We received a request to change the password on your account.')
-            ->line('Enter this verification code to confirm the change:')
-            ->line('**'.$this->code.'**')
-            ->line('This code expires in 10 minutes.')
-            ->line('If you did not request this, ignore this email — your password will stay the same.');
+            ->subject('Your password change code — '.config('school.short'))
+            ->markdown('emails.otp', ['code' => $this->code])
+            ->withSymfonyMessage(function (\Symfony\Component\Mime\Email $message) {
+                $message->embedFromPath(public_path('images/logo.png'), 'logo');
+            });
     }
 }
