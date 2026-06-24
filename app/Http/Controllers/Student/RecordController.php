@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class RecordController extends Controller
 {
-    // Past semester records (GPA history) for the authenticated student.
+    // Past semester records (GPA + collapsible subject breakdown) for the student.
     public function showRecords(Request $request)
     {
         $student = Auth::user()->student;
@@ -21,6 +21,12 @@ class RecordController extends Controller
             ->select('semester_records.*')
             ->get();
 
-        return view('student.records', compact('student', 'records'));
+        // Match each record to its enrollment (section + graded subjects) by year + semester.
+        $enrollments = $student->enrollments()
+            ->with(['section', 'subjects'])
+            ->get()
+            ->keyBy(fn ($e) => $e->section->school_year_id.'-'.$e->section->semester);
+
+        return view('student.records', compact('student', 'records', 'enrollments'));
     }
 }

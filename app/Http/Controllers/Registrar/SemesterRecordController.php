@@ -22,9 +22,15 @@ class SemesterRecordController extends Controller
             ->sortBy(fn ($r) => $r->schoolYear->year_label.$r->semester)
             ->values();
 
+        // Match each record to its enrollment (section + graded subjects).
+        $enrollments = $student->enrollments()
+            ->with(['section', 'subjects'])
+            ->get()
+            ->keyBy(fn ($e) => $e->section->school_year_id.'-'.$e->section->semester);
+
         $schoolYears = SchoolYear::orderByDesc('year_label')->get();
 
-        return view('registrar.records.show', compact('student', 'records', 'schoolYears'));
+        return view('registrar.records.show', compact('student', 'records', 'enrollments', 'schoolYears'));
     }
 
     // Manually create/update a single semester record (GPA + lock).

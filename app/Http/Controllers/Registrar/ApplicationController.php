@@ -149,11 +149,12 @@ class ApplicationController extends Controller
             ->with('status', 'application-qualified');
     }
 
-    // total seats across the strand's sections for that grade
+    // total seats across the strand's sections for that grade, in the active year
     private function seatsFor(Application $application): int
     {
         return (int) Section::where('strand_id', $application->strand_id)
             ->where('grade_level', $application->grade_level)
+            ->when(\App\Models\SchoolYear::active(), fn ($q, $sy) => $q->where('school_year_id', $sy->id))
             ->sum('max_capacity');
     }
 
