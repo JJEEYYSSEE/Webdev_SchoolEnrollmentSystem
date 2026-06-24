@@ -100,7 +100,7 @@
                                                     <a href="{{ route('registrar.sections.showEditSection', $section->id) }}" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1">
                                                         <i class="bi bi-pencil"></i> Edit
                                                     </a>
-                                                    <form method="POST" action="{{ route('registrar.sections.deleteSection', $section->id) }}" class="d-inline" onsubmit="return confirm('Delete this section? This will delete all its links.')">
+                                                    <form method="POST" action="{{ route('registrar.sections.deleteSection', $section->id) }}" class="d-inline" data-confirm="Delete this section? This will delete all its links." data-confirm-title="Delete Section" data-confirm-ok="Delete" data-confirm-danger>
                                                         @csrf 
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-1">

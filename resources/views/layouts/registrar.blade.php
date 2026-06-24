@@ -98,5 +98,7 @@
         <span>Powered by <strong>{{ config('school.platform', 'E-Tala Enrollment System') }}</strong></span>
     </footer>
 
+    @include('partials.confirm-modal')
+    @include('partials.submit-loading')
 </body>
 </html>

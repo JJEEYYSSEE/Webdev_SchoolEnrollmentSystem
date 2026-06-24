@@ -188,7 +188,8 @@
             <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
                 @if ($showBatch)
                     <button type="submit" class="btn btn-success btn-sm d-inline-flex align-items-center gap-1"
-                            onclick="return confirm('Approve all selected enrollments? This cannot be undone.')">
+                            data-confirm="Approve all selected enrollments? This cannot be undone."
+                            data-confirm-title="Batch Approve" data-confirm-ok="Approve All">
                         <i class="bi bi-check2-all"></i> Batch Approve Selected
                     </button>
                 @else
