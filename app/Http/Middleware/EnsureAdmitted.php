@@ -8,15 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureAdmitted
 {
-    /**
-     * Keep not-yet-admitted students inside the application flow.
-     *
-     * A student without a School ID is still an applicant — bounce them to the
-     * application form/status page until the registrar issues their School ID.
-     * Other roles (registrar) pass through untouched.
-     *
-     * @param  Closure(Request): (Response)  $next
-     */
+    // A student with no School ID is still an applicant — keep them in the application flow.
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();

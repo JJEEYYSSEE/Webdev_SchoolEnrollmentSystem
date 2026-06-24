@@ -52,10 +52,7 @@ class ProfileController extends Controller
         Auth::logout();
 
         DB::transaction(function () use ($user) {
-            // enrollments.student_id is ON DELETE RESTRICT, so a student with
-            // enrollments would otherwise block the cascade and leave the user
-            // row in place. Clear enrollments (their subjects cascade) first,
-            // then deleting the user cascades the student + remaining records.
+            // enrollments use RESTRICT — clear them first, then deleting the user cascades the rest
             if ($student = $user->student) {
                 $student->enrollments()->delete();
             }
