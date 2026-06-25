@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="SHS Online Enrollment Portal — Register, enroll, and track your academic records online.">
     <title>{{ config('school.short', 'CISHS') }} — SHS Online Portal</title>
+    @include('partials.icon-head')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="auth-body auth-body--landing">

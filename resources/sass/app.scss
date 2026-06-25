@@ -7,8 +7,7 @@
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
 
-// Bootstrap Icons
-@import 'bootstrap-icons/font/bootstrap-icons.css';
+// Bootstrap Icons are self-hosted + preloaded via partials/icon-head (avoids FOUT on navigation)
 
 // Custom Styles
 
@@ -828,5 +827,30 @@ body.portal-student {
         color: #adb5bd;
         background: transparent;
     }
+}
+
+// ── Half-step gap utilities ────────────────────
+.gap-1\.5 { gap: .375rem !important; }
+.gap-2\.5 { gap: .625rem !important; }
+
+// ── Page-transition animation (fires on each navigation) ─────────────────────────
+@keyframes pageIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+.page-anim { animation: pageIn .18s ease-out both; }
+
+// ── Strand chart (registrar dashboard) ───────────────────────────────────────────
+.strand-bar {
+    height: 12px;
+    border-radius: 6px;
+    background: #eef1f5;
+    overflow: hidden;
+}
+.strand-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 6px;
+    transition: width .4s ease;
 }
 

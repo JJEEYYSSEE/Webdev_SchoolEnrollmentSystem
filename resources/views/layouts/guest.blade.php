@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('school.short', 'CISHS')) — {{ config('school.short', 'CISHS') }}</title>
+    @include('partials.icon-head')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="auth-body @yield('auth-theme', 'auth-body--student')">
     <div class="guest-wrapper">
-        <div class="auth-stack d-flex flex-column align-items-center w-100">
+        <div class="auth-stack d-flex flex-column align-items-center w-100 page-anim">
             <div class="auth-card card border-0 rounded-4 shadow-lg @yield('card-class')">
                 {{-- Card header --}}
                 <div class="card-header border-0 text-center py-4 bg-transparent text-dark">

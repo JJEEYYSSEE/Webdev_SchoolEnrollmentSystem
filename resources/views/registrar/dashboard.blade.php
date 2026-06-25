@@ -54,10 +54,15 @@
         </div>
     @endif
 
-    {{-- Stat Cards --}}
+    {{-- Stats + Approved-by-Strand donut (one row) --}}
+    @php
+        $strandColors = ['STEM' => '#2bb3a3', 'ABM' => '#5b93da', 'HUMSS' => '#f6b73c', 'GAS' => '#a98bf5', 'TVL' => '#2cc7df'];
+        $strandTotal  = $perStrand->sum();
+        $color        = fn ($code) => $strandColors[$code] ?? '#2bb3a3';
+    @endphp
     <div class="row g-3 mb-4">
-        {{-- Pending Card --}}
-        <div class="col-xl-3 col-md-6 col-12">
+        {{-- Pending --}}
+        <div class="col-12 col-md-6 col-xl">
             <div class="card h-100 border-0 border-start border-4 border-warning shadow-sm bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -74,8 +79,8 @@
             </div>
         </div>
 
-        {{-- Approved Card --}}
-        <div class="col-xl-3 col-md-6 col-12">
+        {{-- Approved --}}
+        <div class="col-12 col-md-6 col-xl">
             <div class="card h-100 border-0 border-start border-4 border-success shadow-sm bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -92,8 +97,8 @@
             </div>
         </div>
 
-        {{-- Invalid / Returned Card --}}
-        <div class="col-xl-3 col-md-6 col-12">
+        {{-- Invalid / Returned --}}
+        <div class="col-12 col-md-6 col-xl">
             <div class="card h-100 border-0 border-start border-4 border-warning shadow-sm bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
@@ -110,21 +115,42 @@
             </div>
         </div>
 
-        {{-- Strand Summary Card --}}
-        <div class="col-xl-3 col-md-6 col-12">
+        {{-- Approved by Strand (donut) --}}
+        <div class="col-12 col-md-6 col-xl-4">
             <div class="card h-100 border-0 border-start border-4 border-primary shadow-sm bg-white">
-                <div class="card-body">
+                <div class="card-body py-3 px-3">
                     <p class="text-uppercase fw-bold text-muted mb-2" style="font-size: 0.72rem; letter-spacing: 0.05em;">Approved by Strand</p>
-                    <div class="d-flex flex-column gap-1" style="max-height: 80px; overflow-y: auto;">
-                        @forelse ($perStrand as $strand => $total)
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="small text-secondary fw-semibold">{{ $strand }}</span>
-                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-2 py-0.5" style="font-size: 0.75rem;">{{ $total }}</span>
+                    @if ($perStrand->isEmpty())
+                        <div class="text-muted small">No approved enrollments yet.</div>
+                    @else
+                        @php
+                            $stops = []; $acc = 0;
+                            foreach ($perStrand as $code => $total) {
+                                $start = $strandTotal ? $acc / $strandTotal * 360 : 0;
+                                $acc += $total;
+                                $end = $strandTotal ? $acc / $strandTotal * 360 : 0;
+                                $stops[] = $color($code).' '.round($start, 2).'deg '.round($end, 2).'deg';
+                            }
+                        @endphp
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="position:relative; width:118px; height:118px; flex:0 0 auto; border-radius:50%; background:conic-gradient({{ implode(',', $stops) }});">
+                                <div style="position:absolute; inset:26px; background:#fff; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                                    <span class="fw-bold text-dark" style="font-size:1.1rem; line-height:1;">{{ $strandTotal }}</span>
+                                    <span class="text-muted" style="font-size:.58rem;">approved</span>
+                                </div>
                             </div>
-                        @empty
-                            <div class="text-muted small py-1">No strand enrollments yet.</div>
-                        @endforelse
-                    </div>
+                            <div class="flex-grow-1" style="min-width:0;">
+                                @foreach ($perStrand as $code => $total)
+                                    @php $share = $strandTotal ? round($total / $strandTotal * 100) : 0; @endphp
+                                    <div class="d-flex align-items-center gap-2" style="font-size:.78rem; line-height:1.7;">
+                                        <span style="width:10px; height:10px; border-radius:3px; background:{{ $color($code) }}; display:inline-block; flex:0 0 auto;"></span>
+                                        <span class="fw-semibold text-dark">{{ $code }}</span>
+                                        <span class="text-muted ms-auto">{{ $total }} · {{ $share }}%</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
