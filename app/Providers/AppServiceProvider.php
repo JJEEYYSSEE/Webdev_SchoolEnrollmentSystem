@@ -22,6 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Bootstrap 5 pagination (Tailwind was removed) so prev/next arrows render sized.
+        Paginator::useBootstrapFive();
+
         VerifyEmail::toMailUsing(function (object $notifiable, string $url) {
             return (new MailMessage)
                 ->subject('Verify your email — '.config('school.short'))
