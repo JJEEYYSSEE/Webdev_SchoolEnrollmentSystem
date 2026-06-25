@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', config('school.short', 'CISHS')) — Student Portal</title>
+    @include('partials.icon-head')
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body class="portal-student">
@@ -87,7 +88,7 @@
         </aside>
 
         {{-- Main content --}}
-        <div class="flex-grow-1 p-3 p-md-4" style="min-height: calc(100vh - 56px); overflow-x: auto;">
+        <div class="flex-grow-1 p-3 p-md-4 page-anim" style="min-height: calc(100vh - 56px); overflow-x: auto;">
             @yield('content')
         </div>
 
